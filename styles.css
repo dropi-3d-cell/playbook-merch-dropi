@@ -1,0 +1,3168 @@
+/* ==========================================================================
+   PLAYBOOK — PROYECTO LEYENDAS
+   Sistema de diseño: HUD futurista / robótico (estética Battlefield 6)
+   Fondo negro absoluto · esquinas angulares · marcos "bracket" naranja
+   ========================================================================== */
+
+@font-face{
+  font-family:'Redaction';
+  src:url('Resource/Tipografia redaction/Redaction Regular.otf') format('truetype');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+@font-face{
+  font-family:'Chakra Petch';
+  src:url('Resource/Tipografia redaction/Redaction Regular.otf') format('truetype');
+  font-weight:700;
+  font-style:normal;
+  font-display:swap;
+}
+
+/* Itálica de Redaction — se usa SOLO en la M del logo.
+   Se listan varias rutas: el navegador toma la primera que exista, así no hay
+   que renombrar el archivo. Deja la que corresponda a tu carpeta Resource/. */
+@font-face{
+  font-family:'Redaction Italic';
+  src:url('Resource/Tipografia redaction/Redaction Italic.otf'),
+      url('Resource/Tipografia redaction/Redaction_Italic.otf'),
+      url('Resource/Tipografia/Redaction_Italic.otf'),
+      url('Redaction_Italic.otf');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+/* Tusker Grotesk — tipografía de párrafos */
+@font-face{
+  font-family:'Tusker Grotesk';
+  src:url('Resource/Tipografia Tusker/TuskerGrotesk-4500Medium.ttf'),
+      url('Resource/Tipografia tusker/TuskerGrotesk-4500Medium.ttf'),
+      url('Resource/Tipografia/TuskerGrotesk-4500Medium.ttf'),
+      url('TuskerGrotesk-4500Medium.ttf');
+  font-weight:500;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:'Tusker Grotesk';
+  src:url('Resource/Tipografia Tusker/TuskerGrotesk-5700Bold.ttf'),
+      url('Resource/Tipografia tusker/TuskerGrotesk-5700Bold.ttf'),
+      url('Resource/Tipografia/TuskerGrotesk-5700Bold.ttf'),
+      url('TuskerGrotesk-5700Bold.ttf');
+  font-weight:700;
+  font-style:normal;
+  font-display:swap;
+}
+
+@font-face{
+  font-family:'Rationale';
+  src:url('Resource/Tipografia redaction/Redaction Regular.otf') format('truetype');
+  font-style:normal;
+  font-display:swap;
+}
+
+:root{
+  /* ---- Paleta de marca (Leyendas) ---- */
+  --black:        #a82616;   /* tinta: se conserva para texto sobre acento */   /* fondo absoluto — coincide con los rgba(13,13,13,..) usados en todo el archivo */
+  --panel:        #f4f3f0;   /* papel cálido — superficie de tarjeta */   /* tono "dark" de la paleta */
+  --panel-2:      #ebeae5;
+  --ash:          #e6e5e1;   /* tono "light" de la paleta, usado en líneas/detalles */
+  --ash-rgb:      10,10,10;   /* las líneas ahora son tinta translúcida */
+
+  --orange:       #d65e17;
+  --orange-rgb:   214,94,23;
+  --flame:        #d65e17;   /* acento caliente / hover / activo */
+  --flame-rgb:    214,94,23;
+
+  --white:        #ffffff;
+  --ink:          #0a0a0a;   /* alias: texto de alto contraste sobre negro */
+  --ink-rgb:      10,10,10;
+
+  --text-hi:      var(--ink);
+  --text-mid:     rgba(10,10,10,0.60);
+  --text-low:     rgba(10,10,10,0.34);
+
+  --bg:           var(--white);
+  --surface:      var(--panel);
+  --surface-2:    var(--panel-2);
+
+  --line:         rgba(10,10,10,0.13);
+  --glass-bg:     rgba(255,255,255,0.68);
+  --glass-bg-2:   rgba(255,255,255,0.55);
+  --glass-border: rgba(10,10,10,0.12);
+  --glass-shadow: 0 22px 60px rgba(10,10,10,0.10);
+
+  /* ---- Paleta Merch by Dropi — única fuente de verdad.
+       El JS lee estas variables para el ciclo del logo y para el color
+       aleatorio del logo de dropi. Si cambias un hex, cambia en todo el sitio. */
+  --mc-1: #F4ECE6;   /* Lino Fundador */
+  --mc-2: #FCD0C8;   /* Rosa Guía */
+  --mc-3: #F3A54A;   /* Ámbar Comisión */
+  --mc-4: #BF8C5E;   /* Camel Legado */
+  --mc-5: #FEE490;   /* Oro Meta */
+  --mc-6: #D65E17;   /* Naranja Origen */
+  --mc-7: #A82616;   /* Rojo Sello */
+
+  /* Interletrado del logo: −56 de Illustrator = −0.056 em */
+  --merch-track: -0.056em;
+  /* Inclinación de la itálica de la M. Al pasar el cursor se aplica al
+     revés para enderezarla; si la M no queda recta, ajusta este valor. */
+  --m-slant:     19.5deg;
+
+  --font-para:    'Tusker Grotesk', 'Chakra Petch', sans-serif;
+
+  --font-body:    'Chakra Petch', sans-serif;
+  --font-display: 'Chakra Petch', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --ease-out:     cubic-bezier(.16,.8,.24,1);
+  --ease-soft:    cubic-bezier(.4,0,.2,1);
+
+  /* Estética angular: radios casi nulos en vez del liquid-glass redondeado */
+  --radius-lg:    0px;
+  --radius-md:    0px;
+  --radius-sm:    0px;
+
+  --section-pad:  clamp(64px, 10vw, 140px);
+  --nav-h:        89px; /* alto real del .top-nav: 14px + logo 60px + 14px + borde 1px */
+}
+
+/* ----------------------------- RESET ----------------------------- */
+*, *::before, *::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; background:var(--bg); }
+/* Cuando el smooth-scroll con inercia (JS) está activo, el scroll nativo debe quedar en auto
+   o los dos sistemas pelean y el scroll se siente "pegajoso". */
+html.js-smooth{ scroll-behavior:auto; }
+body{
+  margin:0 auto;
+  position:relative;
+  background:var(--bg);
+  color:var(--text-mid);
+  font-family:var(--font-body);
+  font-weight:400;
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{ margin:0; color:var(--text-hi); font-weight:700; }
+p{ margin:0; }
+a{ color:inherit; text-decoration:none; }
+ul{ margin:0; padding:0; list-style:none; }
+img{ max-width:100%; display:block; }
+
+::selection{ background:rgba(var(--flame-rgb),0.4); color:var(--white); }
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:0.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.001ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+:focus-visible{ outline:2px solid var(--orange); outline-offset:3px; border-radius:0; }
+
+/* ============================================================
+   ICONOS BASE
+   ============================================================ */
+.icon{ width:1em; height:1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+/* ============================================================
+   FIRMA VISUAL — marcos HUD con esquinas "bracket"
+   Se reutiliza en paneles clave de todo el playbook
+   ============================================================ */
+.hud-frame{ position:relative; }
+.hud-corner{
+  position:absolute;
+  width:14px; height:14px;
+  pointer-events:none;
+  transition:width .3s var(--ease-out), height .3s var(--ease-out);
+}
+.hud-corner--tl{
+  top:-1px; left:-1px;
+  border-top:2px solid var(--orange);
+  border-left:2px solid var(--orange);
+}
+.hud-corner--br{
+  bottom:-1px; right:-1px;
+  border-bottom:2px solid var(--orange);
+  border-right:2px solid var(--orange);
+}
+.hud-frame:hover .hud-corner{ width:20px; height:20px; }
+
+/* ============================================================
+   MENÚ SUPERIOR — barra fija con logo central
+   ============================================================ */
+.top-nav{
+  position:fixed; top:0; left:0; right:0;
+  z-index:70;
+  display:flex; align-items:center; justify-content:center;
+  gap:clamp(18px, 3vw, 40px);
+  padding:14px clamp(20px, 4vw, 48px);
+  background:linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.80));
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(18px) saturate(120%);
+  -webkit-backdrop-filter:blur(18px) saturate(120%);
+  box-shadow:0 10px 30px rgba(10,10,10,0.06);
+}
+.top-nav-links{
+  display:flex; align-items:center;
+  gap:clamp(12px, 1.8vw, 26px);
+  flex:1 1 0;
+  min-width:0;
+}
+.top-nav-links--left{ justify-content:flex-end; }
+.top-nav-links--right{ justify-content:flex-start; }
+.top-nav-links a{
+  font-family:var(--font-mono);
+  font-weight:500;
+  font-size:11.5px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--text-mid);
+  white-space:nowrap;
+  padding-bottom:3px;
+  border-bottom:1px solid transparent;
+  transition:color .3s var(--ease-soft), border-color .3s var(--ease-soft);
+}
+.top-nav-links a:hover{ color:var(--orange); border-color:var(--orange); }
+
+.top-nav-logo{
+  flex:none;
+  width:60px; height:60px;
+  border-radius:var(--radius-sm);
+  display:flex; align-items:center; justify-content:center;
+  background:var(--panel);
+  border:1px solid var(--line);
+  overflow:hidden;
+  transition:border-color .4s var(--ease-out);
+}
+.top-nav-logo:hover{ border-color:var(--orange); }
+.top-nav-logo img{ width:100%; height:100%; object-fit:contain; }
+
+/* Espacio reservado para que el contenido no quede oculto tras la barra fija */
+#playbook{ padding-top:0; }
+
+@media (max-width:960px){
+  .top-nav-links{ display:none; }
+  .top-nav{ justify-content:center; padding:12px 20px; }
+}
+
+/* ============================================================
+   MENÚ FLOTANTE — solo versión móvil (checkbox hack, sin JS)
+   ============================================================ */
+.nav-toggle-input{ position:absolute; opacity:0; pointer-events:none; }
+
+.nav-backdrop{
+  position:fixed; inset:0;
+  background:rgba(10,10,10,0.42);
+  backdrop-filter:blur(3px);
+  opacity:0; visibility:hidden;
+  transition:opacity .5s var(--ease-soft), visibility .5s;
+  z-index:60;
+}
+.nav-toggle-input:checked ~ .nav-backdrop{ opacity:1; visibility:visible; }
+
+.nav-fab-wrap{
+  display:none; /* oculto en escritorio: el .top-nav ya resuelve la navegación ahí */
+  position:fixed;
+  right:clamp(16px,4vw,36px);
+  bottom:clamp(16px,4vw,36px);
+  z-index:80;
+  flex-direction:column; align-items:flex-end;
+  gap:16px;
+}
+.nav-fab{
+  position:relative;
+  width:56px; height:56px;
+  border-radius:var(--radius-sm);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  color:var(--black);
+  background:linear-gradient(135deg, var(--orange), var(--flame));
+  border:1px solid rgba(var(--ash-rgb),0.3);
+  box-shadow:0 10px 30px rgba(var(--orange-rgb),0.35);
+  transition:transform .4s var(--ease-out), box-shadow .4s var(--ease-out), background .4s var(--ease-out);
+}
+.nav-fab:hover{ transform:scale(1.06); box-shadow:0 14px 40px rgba(var(--orange-rgb),0.5); }
+.nav-fab .icon{ position:absolute; width:22px; height:22px; transition:opacity .35s var(--ease-soft), transform .45s var(--ease-out); }
+.nav-fab .icon-shut{ opacity:0; transform:rotate(-90deg) scale(.6); }
+.nav-toggle-input:checked ~ .nav-fab-wrap .nav-fab .icon-open{ opacity:0; transform:rotate(90deg) scale(.6); }
+.nav-toggle-input:checked ~ .nav-fab-wrap .nav-fab .icon-shut{ opacity:1; transform:rotate(0) scale(1); }
+.nav-toggle-input:checked ~ .nav-fab-wrap .nav-fab{
+  background:var(--panel);
+  color:var(--orange);
+  border-color:var(--orange);
+  box-shadow:0 10px 30px rgba(10,10,10,0.08);
+}
+
+.nav-menu{
+  display:flex; flex-direction:column;
+  gap:2px;
+  min-width:250px;
+  padding:16px;
+  border-radius:var(--radius-md);
+  background:var(--glass-bg-2);
+  border:1px solid var(--line);
+  backdrop-filter:blur(24px) saturate(140%);
+  -webkit-backdrop-filter:blur(24px) saturate(140%);
+  box-shadow:0 24px 60px rgba(10,10,10,0.12);
+  transform:translateY(14px) scale(.96);
+  opacity:0; visibility:hidden;
+  transform-origin:bottom right;
+  transition:opacity .45s var(--ease-out), transform .45s var(--ease-out), visibility .45s;
+}
+.nav-toggle-input:checked ~ .nav-fab-wrap .nav-menu{ opacity:1; visibility:visible; transform:translateY(0) scale(1); }
+.nav-menu-eyebrow{
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--text-low);
+  padding:6px 10px 10px;
+}
+.nav-menu a{
+  display:flex; align-items:center;
+  padding:11px 12px;
+  border-left:2px solid transparent;
+  font-size:14px; font-weight:600; color:var(--text-mid);
+  transition:background .3s var(--ease-soft), color .3s var(--ease-soft), padding-left .3s var(--ease-soft), border-color .3s var(--ease-soft);
+}
+.nav-menu a:hover{ background:rgba(var(--orange-rgb),0.1); color:var(--orange); border-color:var(--orange); padding-left:18px; }
+
+/* Solo aparece cuando el .top-nav oculta sus links (mismo breakpoint) */
+@media (max-width:960px){
+  .nav-fab-wrap{ display:flex; }
+}
+@media (max-width:720px){
+  .nav-fab-wrap{ right:16px; bottom:16px; }
+  .nav-menu{ min-width:78vw; }
+}
+
+/* ============================================================
+   HERO — pantalla principal (INTRO), fuera del flujo del playbook
+   ============================================================ */
+body.intro-active{ overflow:hidden; height:100vh; }
+
+.hero{
+  position:fixed;
+  inset:0;
+  z-index:90;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+  overflow:hidden;
+  text-align:center;
+  padding:24px;
+  padding-bottom:clamp(56px, 10vh, 120px);
+  background:var(--black);
+  transition:opacity .75s var(--ease-soft), transform .75s var(--ease-soft);
+}
+.hero--exit{
+  opacity:0;
+  transform:scale(1.04);
+  pointer-events:none;
+}
+
+/* Video de fondo en bucle, a pantalla completa, detrás del botón */
+.hero-bg-video{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  z-index:0;
+  /* filter:grayscale(.15) contrast(1.08) brightness(.9); */
+}
+
+.hero .btn-liquid-glass{ position:relative; z-index:2; }
+
+/* Botón HUD: bordes rectos, marco bracket naranja, relleno en hover */
+.btn-liquid-glass{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:18px 46px;
+  border-radius:var(--radius-sm);
+  font-family:var(--font-body);
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--ink);
+  background:rgba(255,255,255,0.86);
+  border:1px solid rgba(255,255,255,0.9);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 0 0 rgba(var(--orange-rgb),0);
+  cursor:pointer;
+  transition:background .35s var(--ease-out), box-shadow .35s var(--ease-out), color .35s var(--ease-out), border-color .35s var(--ease-out);
+}
+.btn-liquid-glass:hover{
+  background:linear-gradient(120deg, var(--orange), var(--flame));
+  border-color:transparent;
+  color:var(--black);
+  box-shadow:0 14px 40px rgba(var(--orange-rgb),0.4);
+}
+.btn-liquid-glass:active{ transform:translateY(1px); }
+
+/* ============================================================
+   PANEL DE VIDRIO (glass-panel) — efecto LIQUID GLASS
+   El brillo especular sigue al cursor vía --mx/--my (actualizadas
+   por JS en script.js) e interpola suave gracias a @property.
+   ============================================================ */
+@property --mx{ syntax:'<percentage>'; inherits:false; initial-value:50%; }
+@property --my{ syntax:'<percentage>'; inherits:false; initial-value:32%; }
+
+.glass-panel{
+  --mx:50%; --my:32%;
+  position:relative;
+  isolation:isolate;
+  background:var(--glass-bg);
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+  /* Fallback (Safari / navegadores sin soporte de filtros SVG en backdrop-filter) */
+  backdrop-filter:blur(22px) saturate(180%);
+  -webkit-backdrop-filter:blur(22px) saturate(180%);
+  /* Liquid glass real: distorsiona/refracta lo que hay detrás del panel */
+  backdrop-filter:url(#liquid-glass-distort) blur(5px) saturate(180%);
+  box-shadow:var(--glass-shadow);
+  overflow:hidden;
+  transition:
+    --mx .7s var(--ease-out),
+    --my .7s var(--ease-out),
+    border-color .4s var(--ease-out),
+    box-shadow .5s var(--ease-out);
+}
+.glass-panel:hover{
+  border-color:rgba(var(--ash-rgb),0.22);
+  box-shadow:var(--glass-shadow), 0 0 60px rgba(var(--orange-rgb),0.08);
+}
+
+/* Brillo especular: sigue al cursor, se funde con la superficie */
+.glass-panel::before{
+  content:"";
+  position:absolute; inset:0;
+  z-index:1;
+  background:radial-gradient(560px circle at var(--mx) var(--my), rgba(255,255,255,0.20), transparent 60%);
+  mix-blend-mode:overlay;
+  opacity:0;
+  transition:opacity .5s var(--ease-out);
+  pointer-events:none;
+}
+.glass-panel:hover::before{ opacity:1; }
+
+/* Anillo de refracción: el borde se enciende hacia donde apunta la luz */
+.glass-panel::after{
+  content:"";
+  position:absolute; inset:0;
+  z-index:1;
+  border-radius:inherit;
+  padding:1px;
+  background:radial-gradient(460px circle at var(--mx) var(--my), rgba(255,255,255,.6), rgba(255,255,255,0) 58%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  opacity:0;
+  transition:opacity .5s var(--ease-out);
+  pointer-events:none;
+}
+.glass-panel:hover::after{ opacity:1; }
+
+.glass-panel > *:not(.hud-corner){ position:relative; z-index:2; }
+
+@media (prefers-reduced-motion: reduce){
+  .glass-panel{ transition:border-color .3s, box-shadow .3s; }
+}
+
+/* ============================================================
+   EYEBROW — etiqueta técnica con punto pulsante
+   ============================================================ */
+.eyebrow{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--font-mono);
+  font-size:12px; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--orange);
+}
+.eyebrow::before{
+  content:""; width:7px; height:7px; border-radius:50%;
+  background:var(--orange);
+  box-shadow:0 0 12px 2px rgba(var(--orange-rgb),0.7);
+  animation:pulse-dot 2.4s ease-in-out infinite;
+}
+@keyframes pulse-dot{
+  0%,100%{ opacity:1; transform:scale(1); }
+  50%{ opacity:.5; transform:scale(0.75); }
+}
+
+/* ============================================================
+   SECCIÓN — contenedor base del playbook
+   ============================================================ */
+.section{ position:relative; padding:var(--section-pad) clamp(20px, 6vw, 80px); max-width:1920px;  margin:0 auto; }
+.section-info{ position:relative; padding:0px; max-width:1920px;  margin:0 auto; }
+.section-carrousel{ position:relative; max-width:1920px; margin:0 auto; }
+.section::before{
+  content:"";
+  position:absolute; top:0; left:0; right:0; height:120px;
+  background:linear-gradient(to bottom, var(--bg), transparent);
+  pointer-events:none; z-index:0;
+}
+.section > *{ position:relative; z-index:1; }
+
+.section-head{ display:flex; align-items:flex-end; gap:20px; margin-bottom:1%; }
+.section-title{
+  font-family:var(--font-display);
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:-0.02em;
+  font-size:clamp(38px, 6vw, 30px);
+  line-height:0.98;
+  color:var(--text-hi);
+}
+.subsection-title{
+  font-family:var(--font-body);
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  font-size:clamp(20px, 2.4vw, 28px);
+  color:var(--text-hi);
+  margin:clamp(56px,7vw,88px) 0 28px;
+}
+.section-intro{ max-width:640px; font-size:16px; color:var(--text-mid); margin-bottom:clamp(40px,5vw,64px); }
+
+/* Fondo que se ilumina al pasar el cursor (glow naranja sobre negro) */
+.glow-surface{ position:relative; overflow:hidden; }
+.glow-surface::after{
+  content:"";
+  position:absolute; inset:-10%;
+  background:radial-gradient(560px circle at 50% 38%, rgba(var(--orange-rgb),0.16), transparent 68%);
+  opacity:0;
+  transition:opacity .7s var(--ease-soft);
+  pointer-events:none; z-index:0;
+}
+.glow-surface:hover::after{ opacity:1; }
+
+/* Divisor de sección con línea que fluye naranja→flame */
+.section-divider{
+  position:relative;
+  max-width:1440px;
+  margin:0 auto;
+  padding:0 clamp(20px, 6vw, 80px);
+}
+.section-divider span{
+  display:block;
+  height:1px;
+  width:100%;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(var(--ash-rgb),0.18) 12%,
+    var(--orange) 35%,
+    var(--flame) 50%,
+    var(--orange) 65%,
+    rgba(var(--ash-rgb),0.18) 88%,
+    transparent 100%);
+  background-size:220% 100%;
+  animation:divider-flow 7s linear infinite;
+}
+@keyframes divider-flow{
+  0%{ background-position:0% 0; }
+  100%{ background-position:220% 0; }
+}
+
+/* ============================================================
+   SHOWCASE — sección con imagen de fondo + ventana glass HUD
+   Usada en "¿Qué es Leyendas?"
+   ============================================================ */
+.showcase{
+  padding-left:0;
+  padding-right:0;
+  padding-top:var(--nav-h);
+  padding-bottom: 0px;
+
+  max-width:none;
+}
+
+.showcase::before{ display:none; }
+
+.showcase-frame{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:0;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  padding:clamp(24px, 5vw, 64px);
+  background:var(--black);
+}
+
+.showcase-bg{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  z-index:0;
+  /* filter:grayscale(.25) contrast(1.1) brightness(.75); */
+}
+
+.showcase-window{
+  position:relative; z-index:2;
+  max-width:560px;
+  padding:clamp(32px, 4vw, 52px);
+  background:var(--glass-bg-2);
+  border:1px solid var(--line);
+  backdrop-filter:blur(24px) saturate(140%);
+  -webkit-backdrop-filter:blur(24px) saturate(140%);
+  box-shadow:0 30px 70px rgba(10,10,10,0.12);
+}
+
+.showcase-window .eyebrow{ margin-bottom:18px; }
+
+.showcase-title{
+  font-family:var(--font-display);
+  font-weight:700;
+  
+  letter-spacing:-0.08em;
+  font-size:clamp(30px, 4.4vw, 52px);
+  line-height:0.8;
+  color:var(--white);
+  margin-bottom:20px;
+}
+
+.showcase-text{
+  font-size:15.5px;
+  color:var(--text-mid);
+  max-width:46ch;
+  margin-bottom:30px;
+}
+
+@media (max-width:900px){
+  .showcase-window{ max-width:100%; }
+}
+
+/* ---- Ventana sin recuadro: texto blanco directo sobre la foto -------------
+   Se usa en "Por eso, camellamos duro y parejo". Los !important son para
+   ganarle al tema papel (bloque de más abajo), que pinta los paneles de vidrio
+   en tinta. Si querés volver al recuadro: quitá la clase --bare del HTML. */
+.showcase-window--bare{
+  background:none !important;
+  border:0 !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  padding:0;
+  max-width:min(620px, 100%);
+}
+.showcase-window--bare::before,
+.showcase-window--bare::after{ display:none !important; }
+.showcase-window--bare .showcase-title{
+  color:#fff !important;
+  text-shadow:0 2px 34px rgba(0,0,0,.35);
+}
+.showcase-window--bare .showcase-text{
+  color:rgba(255,255,255,.88) !important;
+  text-shadow:0 1px 22px rgba(0,0,0,.4);
+}
+.showcase-window--bare .eyebrow{
+  color:rgba(255,255,255,.85) !important;
+  text-shadow:0 1px 18px rgba(0,0,0,.4);
+}
+
+
+/* Botón CTA — relleno sólido naranja→flame, esquinas rectas */
+.btn-cta{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding:17px 34px;
+  border-radius:var(--radius-sm);
+  font-family:var(--font-body);
+  font-weight:700;
+  font-size:13px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--black);
+  background:linear-gradient(135deg, var(--orange), var(--flame));
+  border:none;
+  box-shadow:0 18px 40px rgba(var(--orange-rgb),0.35);
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform .4s var(--ease-out), box-shadow .4s var(--ease-out);
+}
+.btn-cta::before{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.35) 48%, transparent 66%);
+  transform:translateX(-140%);
+  transition:transform .9s var(--ease-out);
+  pointer-events:none;
+}
+.btn-cta:hover::before{ transform:translateX(140%); }
+.btn-cta:hover{
+  transform:translateY(-3px);
+  box-shadow:0 24px 54px rgba(var(--orange-rgb),0.5);
+}
+.btn-cta .icon{ width:16px; height:16px; }
+
+/* ============================================================
+   ANIMACIONES AL HACER SCROLL (CSS puro — Scroll-Driven Animations)
+   Progressive enhancement: sin soporte, el contenido es visible
+   de inmediato; con soporte (Chrome/Edge), aparece al hacer scroll.
+   ============================================================ */
+@supports (animation-timeline: view()){
+  .reveal-fade{
+    opacity:0; transform:translateY(30px);
+    animation:reveal-fade-kf linear both;
+    animation-timeline:view();
+    animation-range:entry 0% entry 100%;
+  }
+  .reveal-image{
+    opacity:0; transform:translateY(56px) scale(.96);
+    animation:reveal-image-kf linear both;
+    animation-range:entry 0% entry 100%;
+  }
+}
+@keyframes reveal-fade-kf{ to{ opacity:1; transform:translateY(0); } }
+@keyframes reveal-image-kf{ to{ opacity:1; transform:translateY(0) scale(1); } }
+
+/* ============================================================
+   OBJETIVOS COMERCIALES — 3 tarjetas, sin modal, jerarquía visual
+   ============================================================ */
+.objetivos-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:28px;
+  align-items:start;
+}
+.objetivo-card{
+  position:relative;
+  background:var(--glass-bg);
+  border:1px solid var(--line);
+  padding:44px 30px 34px;
+  overflow:hidden;
+  transition:transform .5s var(--ease-out), border-color .4s var(--ease-out), background .4s var(--ease-out);
+}
+.objetivo-card:hover{ transform:translateY(-10px); border-color:rgba(var(--orange-rgb),0.5); }
+.objetivo-card--feat{
+  background:var(--glass-bg-2);
+  border-color:rgba(var(--orange-rgb),0.4);
+}
+@media (min-width:761px){
+  .objetivo-card--feat{ transform:translateY(-26px); }
+  .objetivo-card--feat:hover{ transform:translateY(-36px); }
+}
+.objetivo-num{
+  position:absolute; top:4px; right:16px;
+  font-family:var(--font-display); font-weight:700;
+  font-size:96px; line-height:1;
+  color:rgba(var(--ash-rgb),0.05);
+  pointer-events:none;
+}
+.objetivo-bar{ width:38px; height:3px; background:linear-gradient(90deg,var(--orange),var(--flame)); margin-bottom:24px; transition:width .4s var(--ease-out); }
+.objetivo-card:hover .objetivo-bar{ width:66px; }
+.objetivo-icon{ width:32px; height:32px; color:var(--orange); margin-bottom:20px; }
+.objetivo-title{ font-family:var(--font-display); font-weight:700; text-transform:uppercase; letter-spacing:.02em; font-size:19px; color:var(--text-hi); margin-bottom:14px; }
+.objetivo-text{ font-size:14px; color:var(--text-mid); max-width:34ch; }
+
+@media (max-width:900px){
+  .objetivos-grid{ grid-template-columns:1fr; gap:20px; }
+  .objetivo-card--feat{ transform:none !important; }
+}
+
+/* ============================================================
+   CONCEPTO DE MARCA
+   ============================================================ */
+.concepto-grid{
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  gap:clamp(40px, 6vw, 100px);
+  align-items:center;
+}
+.concepto-statement{
+  font-family:var(--font-display);
+  font-weight:700;
+  letter-spacing:-0.02em;
+  text-transform:uppercase;
+  font-size:clamp(34px, 4.6vw, 90px);
+  line-height:0.7;
+  color:var(--text-hi);
+}
+.concepto-statement em{ font-style:normal; color:var(--orange); }
+.concepto-desc{ font-size:15.5px; color:var(--text-mid); max-width:52ch; margin:26px 0 8px; }
+
+.concepto-pillars{ display:flex; flex-direction:column; border-top:1px solid var(--line); }
+.concepto-pillar{
+  display:flex; align-items:center; gap:16px;
+  padding:20px 4px;
+  border-bottom:1px solid var(--line);
+  transition:padding-left .3s var(--ease-out), background .3s var(--ease-out);
+}
+.concepto-pillar:hover{ padding-left:14px; background:rgba(var(--orange-rgb),0.06); }
+.concepto-pillar-icon{ width:20px; height:20px; color:var(--orange); flex:none; }
+.concepto-pillar-text{ display:flex; flex-direction:column; gap:4px; }
+.concepto-pillar-label{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-low); }
+.concepto-pillar-value{ font-size:14.5px; font-weight:600; color:var(--text-hi); }
+
+@media (max-width:900px){ .concepto-grid{ grid-template-columns:1fr; gap:40px; } }
+
+/* ============================================================
+   VIDEO MANIFIESTO — full-bleed
+   ============================================================ */
+.video-manifiesto{ position:relative; padding:0; max-width:none; min-height:74vh; display:flex; align-items:flex-end; overflow:hidden; }
+.video-manifiesto::before{ display:none; }
+.video-manifiesto-media{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover;
+  filter:grayscale(.2) contrast(1.1) brightness(.72);
+}
+.video-manifiesto-content{ position:relative; z-index:1; padding:clamp(32px, 6vw, 64px); max-width:760px; }
+.video-manifiesto-content .eyebrow{ margin-bottom:18px; }
+.video-manifiesto-title{
+  font-family:var(--font-display); font-weight:700; text-transform:uppercase;
+  font-size:clamp(28px, 4.4vw, 50px); color:#fff; line-height:1.05;
+}
+
+/* ============================================================
+   LÍNEA VISUAL — logo, variaciones, construcción, paleta, tipografía
+   ============================================================ */
+.logo-showcase{
+  display:flex; align-items:center; justify-content:center;
+  padding:80px 40px; min-height:300px;
+}
+.logo-showcase img{ max-width:64%; max-height:200px; object-fit:contain; }
+
+.logo-variants-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:20px; }
+.logo-variant-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  padding:30px 20px;
+  display:flex; flex-direction:column; align-items:center; gap:18px;
+  transition:border-color .3s var(--ease-out), transform .4s var(--ease-out);
+}
+.logo-variant-card:hover{ transform:translateY(-6px); border-color:rgba(var(--orange-rgb),.5); }
+.logo-variant-card img{ max-width:80%; height:64px; object-fit:contain; }
+.logo-variant-card--dark{ background:var(--black); }
+.logo-variant-card--light{ background:var(--ash); }
+.logo-variant-card--light .logo-variant-label{ color:rgba(13,13,13,.6); }
+.logo-variant-label{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-low); }
+
+@property --dmx{ syntax:'<percentage>'; inherits:true; initial-value:50%; }
+@property --dmy{ syntax:'<percentage>'; inherits:true; initial-value:50%; }
+
+.logo-construction{
+  --dmx:50%; --dmy:50%;
+  position:relative;
+  aspect-ratio:16/9;
+  /*background-color:var(--panel)*/
+  background-image:radial-gradient(rgba(var(--ash-rgb),.07) 1.2px, transparent 1.2px);
+  background-size:24px 24px;
+  /*border:1px solid var(--line);*/
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+  cursor:pointer;
+  transition:--dmx .25s var(--ease-out), --dmy .25s var(--ease-out);
+}
+
+/* Puntos que se iluminan en naranja siguiendo al cursor, como una linterna */
+.logo-construction::after{
+  content:"";
+  position:absolute; inset:0;
+  z-index:0;
+  background-image:radial-gradient(rgba(var(--orange-rgb),.95) 1.4px, transparent 1.4px);
+  background-size:24px 24px;
+  -webkit-mask-image:radial-gradient(150px circle at var(--dmx) var(--dmy), #000 0%, transparent 70%);
+  mask-image:radial-gradient(150px circle at var(--dmx) var(--dmy), #000 0%, transparent 70%);
+  opacity:0;
+  transition:opacity .35s var(--ease-out);
+  pointer-events:none;
+}
+.logo-construction:hover::after{ opacity:1; }
+
+@media (prefers-reduced-motion: reduce){
+  .logo-construction{ transition:none; }
+}
+
+.logo-construction-svg{
+  width:78%;
+  height:78%;
+  position:relative;
+  z-index:1;
+  overflow:visible;
+}
+
+/* Cotas de construcción: ocultas por defecto, "respiran" en opacidad mientras no hay cursor encima */
+.logo-construction-svg .construction-marks{
+  opacity:.16;
+  animation:construction-breathe 3.4s ease-in-out infinite;
+  transform-origin:center;
+}
+/* Al pasar el cursor: se detiene la respiración y se revelan por completo */
+.logo-construction:hover .logo-construction-svg .construction-marks{
+  animation:none;
+  opacity:1;
+  transition:opacity .5s var(--ease-out);
+}
+@keyframes construction-breathe{
+  0%, 100%{ opacity:.12; }
+  50%{ opacity:.5; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .logo-construction-svg .construction-marks{ animation:none; opacity:.4; }
+}
+
+/* Líneas naranjas: no aparecen de golpe, se "dibujan" al mismo tiempo que se ilumina la info */
+.logo-draw{
+  transition:stroke-dashoffset 1.1s var(--ease-out);
+}
+.logo-construction:hover .logo-draw{
+  stroke-dashoffset:0 !important;
+}
+@media (prefers-reduced-motion: reduce){
+  .logo-draw{ transition:none; }
+}
+
+.color-swatches{
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:16px;
+}
+
+.color-swatch{
+  aspect-ratio:1/1;
+  border:1px solid var(--line);
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:18px; position:relative; overflow:hidden;
+  transition:transform .4s var(--ease-out);
+}
+
+.color-swatch:hover{ transform:translateY(-6px); }
+.color-swatch-name{ font-family:var(--font-body); font-weight:700; text-transform:uppercase; font-size:13px; letter-spacing:.04em; }
+.color-swatch-hex{ font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; opacity:.75; margin-top:2px; }
+.color-swatch--black{ background:#eaeaea; color:var(--black); }
+.color-swatch--panel{ background:#191919; color:var(--white); }
+.color-swatch--orange{ background:#d65e17; color:var(--white); }
+.color-swatch--flame{ background:#d65e17; color:var(--white); }
+.color-swatch--rojo{ background:#ff0000; color:var(--black); }
+
+@media (max-width:700px){ .color-swatches{ grid-template-columns:repeat(2, 1fr); } }
+
+.type-specimens{ display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; }
+.type-specimen{ background:var(--panel); border:1px solid var(--line); padding:36px 30px; transition:border-color .3s var(--ease-out); }
+.type-specimen:hover{ border-color:rgba(var(--orange-rgb),.5); }
+.type-specimen-glyph{ font-family:'Chakra Petch'; font-size:clamp(64px, 8vw, 96px); line-height:1; color:var(--text-hi); margin-bottom:18px; }
+.type-specimen-Rat { font-family: 'Rationale'; font-size:clamp(64px, 8vw, 96px); line-height:1; color:var(--text-hi); margin-bottom:18px;}
+.type-specimen--bold .type-specimen-glyph{ font-weight:700; }
+.type-specimen--regular .type-specimen-glyph{ font-weight:400; }
+.type-specimen-name{ font-family:var(--font-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--orange); margin-bottom:10px; }
+.type-specimen-sample{ font-size:13px; color:var(--text-mid); line-height:1.55; word-break:break-word; }
+
+@media (max-width:700px){ .type-specimens{ grid-template-columns:1fr; } }
+
+/* ============================================================
+   TRAMAS — patrones de marca
+   ============================================================ */
+.tramas-grid{ display:flex; flex-direction:column; gap:22px; }
+.pattern-card{
+  position:relative;
+  aspect-ratio:21/6;
+  overflow:hidden;
+  display:flex; align-items:flex-end;
+  padding:22px;
+  border:1px solid var(--line);
+  transition:transform .5s var(--ease-out);
+}
+
+@media (max-width:700px){ .pattern-card--wide{ aspect-ratio:16/9; } }
+.pattern-card:hover{ transform:translateY(-8px); }
+.pattern-frame{ position:absolute; inset:0; overflow:hidden; }
+.pattern{ position:absolute; inset:0; opacity:.95; transition:transform 8s linear; }
+.pattern-card:hover .pattern{ transform:scale(1.06); }
+.pattern-label{
+  position:relative; z-index:1;
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+  color:#fff; padding:8px 14px;
+  background:rgba(13,13,13,0.65);
+  border:1px solid var(--line);
+}
+
+.pattern--iso{
+  background-image:
+    linear-gradient(30deg, rgba(var(--orange-rgb),.5) 12%, transparent 12.5%, transparent 87%, rgba(var(--orange-rgb),.5) 87.5%, rgba(var(--orange-rgb),.5)),
+    linear-gradient(150deg, rgba(var(--flame-rgb),.4) 12%, transparent 12.5%, transparent 87%, rgba(var(--flame-rgb),.4) 87.5%, rgba(var(--flame-rgb),.4)),
+    linear-gradient(30deg, rgba(var(--orange-rgb),.5) 12%, transparent 12.5%, transparent 87%, rgba(var(--orange-rgb),.5) 87.5%, rgba(var(--orange-rgb),.5)),
+    linear-gradient(150deg, rgba(var(--flame-rgb),.4) 12%, transparent 12.5%, transparent 87%, rgba(var(--flame-rgb),.4) 87.5%, rgba(var(--flame-rgb),.4));
+  background-size:56px 96px;
+  background-color:var(--panel);
+}
+
+.pattern--facets{
+  background-color:var(--panel);
+  background-image:conic-gradient(from 0deg at 50% 50%, var(--orange) 0 25%, var(--flame) 0 50%, var(--ash) 0 75%, var(--orange) 0 100%);
+  background-size:64px 64px;
+  opacity:.9;
+}
+
+.pattern--diagonal{
+  background-color:var(--panel);
+  background-image:
+    repeating-linear-gradient(115deg, rgba(var(--orange-rgb),.5) 0 10px, transparent 10px 26px),
+    repeating-linear-gradient(115deg, rgba(var(--ash-rgb),.1) 0 4px, transparent 4px 34px);
+  background-size:140px 70px;
+}
+
+/* ============================================================
+   MEDALLAS / INSIGNIAS — efecto cortina (5 tarjetas)
+   ============================================================ */
+.insignias-strip{ display:flex; gap:6px; height:clamp(360px, 52vw, 540px); }
+
+.insignia-card{
+  position:relative;
+  z-index:0;
+  flex:1;
+  min-width:150px;
+  overflow:hidden;
+  cursor:pointer;
+  background:var(--panel);
+  border:1px solid var(--line);
+  box-shadow:none;
+  transition:flex .6s var(--ease-soft), border-color .4s var(--ease-out), box-shadow .5s var(--ease-out);
+}
+
+/* "Wave": dos crestas de brillo por ciclo. La animación solo se adjunta al expandir,
+   así en reposo queda realmente apagada (no solo pausada en un fotograma con brillo). */
+.insignia-card:hover,
+.insignia-card:focus-within{
+  animation:insignia-border-wave 3.2s ease-in-out infinite;
+}
+
+@keyframes insignia-border-wave{
+  0%, 100%{ box-shadow:0 0 0 1px rgba(var(--orange-rgb),0.2), 0 0 12px 0 rgba(var(--orange-rgb),0.12); }
+  25%{ box-shadow:0 0 0 1px rgba(var(--orange-rgb),0.55), 0 0 30px 2px rgba(var(--orange-rgb),0.36); }
+  50%{ box-shadow:0 0 0 1px rgba(var(--orange-rgb),0.28), 0 0 16px 0 rgba(var(--orange-rgb),0.18); }
+  75%{ box-shadow:0 0 0 1px rgba(var(--orange-rgb),0.6), 0 0 34px 3px rgba(var(--orange-rgb),0.4); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .insignia-card:hover,
+  .insignia-card:focus-within{ animation:none; }
+}
+
+.insignia-card::before{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0));
+  z-index:0;
+}
+
+/* Blur graduado: nítido arriba, se difumina hacia la mitad inferior (misma proporción que el degradado oscuro) */
+/* .insignia-card::after{
+  content:"";
+  position:absolute; inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:1;
+  backdrop-filter:blur(60px);
+  -webkit-backdrop-filter:blur(14px);
+  -webkit-mask-image:linear-gradient(180deg, transparent 0%, transparent 42%, rgba(0,0,0,0) 0%, #000 80%);
+  mask-image:linear-gradient(180deg, transparent 0%, transparent 42%, rgba(0,0,0,0) 0%, #000 80%);
+  transition:opacity .45s var(--ease-out);
+} */
+.insignia-card:hover::after,
+.insignia-card:focus-within::after{ opacity:0; }
+
+.insignia-bg-stack{ position:absolute; inset:0; z-index:-1; overflow:hidden; }
+
+.insignia-bg{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  object-position:center top;
+  opacity:1;
+  transform:none;
+  /* El carrusel no cruza opacidades: recorta. Cada slide entra con un
+     barrido vertical (clip-path) que el JS dispara. */
+  clip-path:inset(100% 0 0 0);
+  transition:clip-path var(--sweep-dur, .85s) var(--ease-out), filter .7s var(--ease-out);
+}
+
+/* Fallback sin JS: la imagen en reposo siempre visible (el JS la sobreescribe
+   con estilos en línea al tomar el control del carrusel). */
+.insignia-bg--base{ clip-path:inset(0 0 0 0); z-index:2; }
+
+/* Al expandir: la imagen sigue llenando la tarjeta (sin escala ni contain) */
+.insignia-card:hover .insignia-bg,
+.insignia-card:focus-within .insignia-bg{
+  object-fit:cover;
+  object-position:center center;
+  transform:none;
+}
+
+/* ---- Flechas del carrusel (sólo visibles con la tarjeta abierta) ---- */
+.insignia-arrow{
+  position:absolute; top:50%; z-index:4;
+  width:38px; height:38px;
+  display:flex; align-items:center; justify-content:center;
+  padding:0;
+  color:var(--ink);
+  background:rgba(255,255,255,.86);
+  border:1px solid rgba(10,10,10,.14);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(-50%) scale(.88);
+  transition:opacity .35s var(--ease-out), transform .35s var(--ease-out),
+             background .25s var(--ease-out), color .25s var(--ease-out),
+             border-color .25s var(--ease-out);
+}
+.insignia-arrow--prev{ left:12px; }
+.insignia-arrow--next{ right:12px; }
+.insignia-arrow svg{
+  width:15px; height:15px;
+  fill:none; stroke:currentColor; stroke-width:1.7;
+  stroke-linecap:square; stroke-linejoin:miter;
+}
+.insignia-card:hover .insignia-arrow,
+.insignia-card:focus-within .insignia-arrow{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(-50%) scale(1);
+}
+.insignia-arrow:hover,
+.insignia-arrow:focus-visible{
+  background:var(--orange);
+  color:var(--white);
+  border-color:transparent;
+  transform:translateY(-50%) scale(1.06);
+}
+/* Una sola imagen = no hay nada que pasar */
+.insignia-card.is-single .insignia-arrow{ display:none; }
+
+
+/* Barrido de luz: recorre de borde a borde y hace loop sin corte visible.
+   La animación solo se adjunta al expandir, así en reposo queda apagada de verdad. */
+.insignia-sweep{
+  position:absolute;
+  top:-70%; left:-70%;
+  width:240%; height:240%;
+  background:linear-gradient(115deg,
+    transparent 36%,
+    rgba(255,255,255,.2) 47%,
+    rgba(255,255,255,.2) 53%,
+    transparent 64%);
+  mix-blend-mode:soft-light;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .4s var(--ease-out);
+}
+.insignia-card:hover .insignia-sweep,
+.insignia-card:focus-within .insignia-sweep{
+  opacity:.4;
+  animation:insignia-sweep-move 7s linear infinite;
+}
+@keyframes insignia-sweep-move{
+  0%{ transform:translate(-45%, -45%); }
+  100%{ transform:translate(45%, 45%); }
+}
+@media (prefers-reduced-motion: reduce){
+  .insignia-card:hover .insignia-sweep,
+  .insignia-card:focus-within .insignia-sweep{ animation:none; opacity:.2; }
+}
+.insignia-card:hover,
+.insignia-card:focus-within{ flex:3.2; border-color:rgba(var(--orange-rgb),0.55); }
+.insignias-strip:hover .insignia-card:not(:hover):not(:focus-within){ flex:0.62; }
+
+.insignia-content{ position:relative; z-index:1; height:100%; display:flex; flex-direction:column; justify-content:flex-end; padding:22px 16px; }
+.insignia-rank{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:#d7d7d7; margin-bottom:10px; white-space:nowrap; }
+.insignia-name{
+  position:absolute;
+  top:20px; right:14px; bottom:20px;
+  display:flex; align-items:flex-end; justify-content:flex-end;
+  font-family:var(--font-display); font-weight:700; text-transform:uppercase;
+  font-size:clamp(10px, 2vw, 20px);
+  line-height:.92;
+  color:#FFff;
+  letter-spacing:.02em;
+  writing-mode:vertical-rl; text-orientation:mixed;
+  white-space:nowrap;
+  pointer-events:none;
+  transition:font-size .4s var(--ease-out), color .4s var(--ease-out);
+}
+.insignia-card:hover .insignia-name,
+.insignia-card:focus-within .insignia-name{
+  position:absolute;
+  writing-mode:horizontal-tb;
+  font-size:clamp(20px, 2.1vw, 30px);
+  line-height:1.15;
+  color:var(--white);
+  margin-bottom:14px;
+  white-space:normal;
+}
+
+.insignia-icon{
+  width:28px; height:28px; color:var(--orange); margin-bottom:14px;
+  opacity:0; transform:translateY(6px);
+  transition:opacity .4s var(--ease-out) .05s, transform .4s var(--ease-out) .05s;
+}
+.insignia-card:hover .insignia-icon,
+.insignia-card:focus-within .insignia-icon{ opacity:1; transform:translateY(0); }
+
+.insignia-desc{
+  font-size:13px; color:var(--text-mid); max-width:32ch;
+  opacity:0; max-height:0; overflow:hidden;
+  transition:opacity .4s var(--ease-out) .1s, max-height .4s var(--ease-out);
+}
+.insignia-card:hover .insignia-desc,
+.insignia-card:focus-within .insignia-desc{ opacity:1; max-height:220px; }
+
+@media (max-width:760px){
+  .insignias-strip{ flex-direction:column; height:auto; gap:8px; }
+  .insignia-card{ flex:none !important; height:84px; }
+  .insignia-content{ flex-direction:row; align-items:center; gap:14px; justify-content:flex-start; padding:0 18px; }
+  .insignia-name{
+    position:static !important;
+    writing-mode:horizontal-tb !important;
+    font-size:16px !important;
+    color:var(--white) !important;
+    margin-bottom:0 !important;
+  }
+  .insignia-icon, .insignia-desc{ display:none; }
+  .insignia-arrow{ display:none; }
+}
+
+/* ============================================================
+   EXPERIENCIA — grid de 4 imágenes
+   ============================================================ */
+@property --ex{ syntax:'<percentage>'; inherits:false; initial-value:50%; }
+
+.experiencia-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:18px;
+}
+.experiencia-card{
+  --ex:50%;
+  position:relative;
+  aspect-ratio:3/4;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-bottom:2px solid rgba(var(--orange-rgb),1);
+}
+/* El primer elemento es el banner ancho de arriba (imagen 1 de la referencia) */
+.experiencia-card:nth-child(1),
+.experiencia-card:nth-child(2){
+  grid-column:1 / -1;
+  aspect-ratio:21/7;
+}
+.experiencia-card img{
+  width:100%; height:100%; object-fit:cover;
+  filter:grayscale(.3) contrast(1.05);
+  transition:transform .6s var(--ease-out), filter .4s var(--ease-out);
+}
+.experiencia-card:hover img{ transform:scale(1.08); filter:grayscale(0) contrast(1.1); }
+.experiencia-card::after{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 55%, rgba(0,0,0,.85) 100%);
+  pointer-events:none;
+}
+/* Línea inferior naranja: se ilumina y sigue el movimiento del cursor */
+.experiencia-card::before{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-2px;
+  height:2px;
+  z-index:2;
+  background:radial-gradient(120px circle at var(--ex) 50%, var(--flame) 0%, var(--orange) 45%, transparent 75%);
+  opacity:0;
+  transition:opacity .35s var(--ease-out), --ex .2s linear;
+  pointer-events:none;
+}
+.experiencia-card:hover::before{ opacity:1; }
+
+.experiencia-caption{
+  position:absolute; left:14px; bottom:14px; z-index:1;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#fff;
+}
+
+@media (max-width:900px){
+  .experiencia-grid{ grid-template-columns:repeat(2, 1fr); }
+  .experiencia-card:nth-child(1),
+  .experiencia-card:nth-child(2){ grid-column:1 / -1; aspect-ratio:16/9; }
+}
+@media (max-width:520px){
+  .experiencia-grid{ grid-template-columns:1fr; }
+  .experiencia-card:nth-child(1),
+  .experiencia-card:nth-child(2){ aspect-ratio:4/3; }
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer{
+  position:relative;
+  border-top:1px solid var(--line);
+  padding:48px 24px;
+  display:flex; flex-direction:column; align-items:center; gap:20px;
+  text-align:center;
+}
+.footer-brand{
+  font-family:'rationale';  letter-spacing:-0.03em; font-size:25px; color:var(--text-hi); }
+.footer-links{ display:flex; gap:28px; flex-wrap:wrap; justify-content:center; }
+.footer-links a{ font-family:var(--font-mono); font-size:11px; letter-spacing:-0.1em; text-transform:uppercase; color:var(--text-mid); transition:color .3s var(--ease-soft); }
+.footer-links a:hover{ color:var(--orange); }
+.footer-copy{ font-family:var(--font-mono); font-size:11px; color:var(--text-low); letter-spacing:.04em; }
+/* ==========================================================================
+   CAPA ORGC — mecánicas adaptadas del análisis de oddritualgolf.com
+   Todo lo de aquí abajo es aditivo: si borras este bloque, el playbook
+   vuelve exactamente a como estaba antes.
+
+   01 · Cursor contextual con estados
+   02 · Preview por hover en el menú superior
+   03 · Hero paginado (3 capítulos = arquitectura del sitio)
+   04 · Scroll suave con inercia + barra de progreso
+   05 · Galería con drag/swipe
+   06 · Split text (revelado por palabra)
+   07 · Índices y códigos de sección
+   08 · Easter egg del footer
+   ========================================================================== */
+
+/* --------------------------------------------------------------
+   01 · CURSOR CONTEXTUAL
+   El cursor es un bracket HUD que cambia de tamaño y muestra una
+   etiqueta según la zona: [data-cursor="Arrastrar"], "Ver", "Siguiente".
+   Solo se activa en punteros finos (html.js-cursor lo pone el JS).
+   -------------------------------------------------------------- */
+.cursor{
+  position:fixed; top:0; left:0;
+  z-index:200;
+  width:0; height:0;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .3s var(--ease-out);
+}
+html.js-cursor .cursor{ opacity:1; }
+html.js-cursor,
+html.js-cursor a,
+html.js-cursor button,
+html.js-cursor label,
+html.js-cursor .insignia-arrow{ cursor:none; }
+
+.cursor-ring{
+  position:absolute; top:0; left:0;
+  width:34px; height:34px;
+  margin:-17px 0 0 -17px;
+  transition:width .35s var(--ease-out), height .35s var(--ease-out),
+             margin .35s var(--ease-out), opacity .3s var(--ease-out);
+}
+.cursor-ring::before,
+.cursor-ring::after{
+  content:"";
+  position:absolute;
+  width:9px; height:9px;
+}
+.cursor-ring::before{ top:0; left:0; border-top:1.5px solid var(--orange); border-left:1.5px solid var(--orange); }
+.cursor-ring::after{ bottom:0; right:0; border-bottom:1.5px solid var(--orange); border-right:1.5px solid var(--orange); }
+
+.cursor-dot{
+  position:absolute; top:0; left:0;
+  width:4px; height:4px;
+  margin:-2px 0 0 -2px;
+  background:var(--flame);
+  transition:opacity .3s var(--ease-out), transform .3s var(--ease-out);
+}
+.cursor-label{
+  position:absolute; top:0; left:0;
+  transform:translate(26px, -50%);
+  font-family:var(--font-mono);
+  font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--orange);
+  white-space:nowrap;
+  opacity:0;
+  transition:opacity .25s var(--ease-out);
+}
+.cursor.is-label .cursor-ring{ width:56px; height:56px; margin:-28px 0 0 -28px; }
+.cursor.is-label .cursor-dot{ opacity:0; }
+.cursor.is-label .cursor-label{ opacity:1; }
+.cursor.is-down .cursor-ring{ width:26px; height:26px; margin:-13px 0 0 -13px; }
+
+@media (prefers-reduced-motion: reduce){
+  .cursor-ring, .cursor-dot, .cursor-label{ transition:none; }
+}
+
+/* --------------------------------------------------------------
+   02 · PREVIEW POR HOVER EN EL MENÚ
+   Cada link del menú superior puede declarar data-preview="ruta.jpg".
+   La miniatura sigue al cursor en el eje X y se descarta sola si la
+   imagen no existe (el JS la retira con onerror).
+   -------------------------------------------------------------- */
+.nav-preview{
+  position:fixed;
+  top:calc(var(--nav-h) + 12px);
+  left:var(--px, 50%);
+  z-index:65;
+  width:clamp(180px, 17vw, 240px);
+  aspect-ratio:16/10;
+  overflow:hidden;
+  background:var(--panel);
+  border:1px solid rgba(var(--orange-rgb),.4);
+  box-shadow:0 24px 60px rgba(10,10,10,.14);
+  pointer-events:none;
+  opacity:0;
+  transform:translate(-50%, -10px);
+  transition:opacity .35s var(--ease-out), transform .45s var(--ease-out), left .45s var(--ease-out);
+}
+.nav-preview.is-on{ opacity:1; transform:translate(-50%, 0); }
+.nav-preview img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  opacity:0;
+  filter:grayscale(.35) contrast(1.08) brightness(.85);
+  transform:scale(1.06);
+  transition:opacity .45s var(--ease-out), transform .8s var(--ease-out);
+}
+.nav-preview img.is-on{ opacity:1; transform:scale(1); }
+.nav-preview::after{
+  content:attr(data-label);
+  position:absolute; left:10px; bottom:8px;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:#fff;
+  text-shadow:0 1px 6px rgba(0,0,0,.9);
+}
+@media (max-width:960px){ .nav-preview{ display:none; } }
+
+/* --------------------------------------------------------------
+   03 · HERO PAGINADO — 3 capítulos
+   El scroll (o las flechas, o el swipe) avanza de capítulo en vez de
+   avanzar la página. Al pasar del 03, se entra al playbook.
+   Este es el único punto del sitio con scroll-jacking.
+   -------------------------------------------------------------- */
+.hero{ justify-content:center; }
+
+.hero-veil{
+  position:absolute; inset:0; z-index:1;
+  /* Sin viñeta: sólo un degradado plano arriba/abajo para que el texto se lea */
+  background:linear-gradient(180deg, rgba(13,13,13,.45) 0%, rgba(13,13,13,0) 32%, rgba(13,13,13,0) 62%, rgba(13,13,13,.55) 100%);
+  pointer-events:none;
+}
+
+.hero-stage{
+  position:relative; z-index:2;
+  width:100%;
+  max-width:1100px;
+  min-height:clamp(280px, 40vh, 420px);
+  padding:0 clamp(20px, 6vw, 48px);
+  display:flex; align-items:center; justify-content:center;
+  text-align:left;
+}
+.hero-slide{
+  position:absolute;
+  inset:0;
+  display:flex; flex-direction:column; justify-content:center;
+  gap:18px;
+  padding:0 clamp(20px, 6vw, 48px);
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(26px);
+  transition:opacity .6s var(--ease-out), transform .7s var(--ease-out), visibility .6s;
+}
+.hero-slide.is-active{ opacity:1; visibility:visible; transform:none; }
+
+.hero-slide-num{
+  font-family:var(--font-mono);
+  font-size:11px; letter-spacing:.28em; text-transform:uppercase;
+  color:var(--orange);
+}
+.hero-slide-title{
+  font-family:var(--font-display);
+  font-weight:700; 
+  font-size:clamp(38px, 7.4vw, 92px);
+  line-height:.8;
+  letter-spacing:-.1em;
+  color:#fff;
+  max-width:16ch;
+}
+.hero-slide-sub{
+  font-size:15px;
+  color:rgba(245,245,245,.68);
+  max-width:44ch;
+}
+.hero-slide-cta{
+  display:inline-flex; align-items:center; gap:12px;
+  align-self:flex-start;
+  margin-top:6px;
+  padding-bottom:5px;
+  font-family:var(--font-mono);
+  font-size:11.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:#fff;
+  border-bottom:1px solid rgba(var(--orange-rgb),.55);
+  background:none; border-left:0; border-right:0; border-top:0;
+  cursor:pointer;
+  transition:color .3s var(--ease-soft), border-color .3s var(--ease-soft), gap .3s var(--ease-out);
+}
+.hero-slide-cta::after{ content:"→"; transition:transform .3s var(--ease-out); }
+.hero-slide-cta:hover{ color:var(--orange); border-color:var(--orange); gap:18px; }
+
+/* HUD del hero: índice, pips, indicador de scroll */
+.hero-hud{
+  position:absolute;
+  left:0; right:0; bottom:clamp(24px, 5vh, 48px);
+  z-index:3;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:20px;
+  padding:0 clamp(20px, 6vw, 48px);
+}
+.hero-index{
+  font-family:var(--font-mono);
+  font-size:13px; letter-spacing:.1em;
+  color:#fff;
+}
+.hero-index span{ color:var(--text-low); }
+
+.hero-pips{ display:flex; gap:8px; align-items:center; }
+.hero-pip{
+  width:34px; height:2px;
+  background:rgba(var(--ash-rgb),.24);
+  border:0; padding:0;
+  cursor:pointer;
+  position:relative; overflow:hidden;
+  transition:background .3s var(--ease-out);
+}
+.hero-pip::after{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(90deg, var(--orange), var(--flame));
+  transform:scaleX(0); transform-origin:0 50%;
+  transition:transform .5s var(--ease-out);
+}
+.hero-pip.is-active::after{ transform:scaleX(1); }
+
+.hero-scroll{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-mono);
+  font-size:10.5px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--text-low);
+}
+.hero-scroll::after{
+  content:"";
+  width:1px; height:26px;
+  background:linear-gradient(180deg, var(--orange), transparent);
+  animation:hero-scroll-hint 2.2s ease-in-out infinite;
+}
+@keyframes hero-scroll-hint{
+  0%,100%{ transform:scaleY(.4); transform-origin:top; opacity:.4; }
+  50%{ transform:scaleY(1); transform-origin:top; opacity:1; }
+}
+
+/* El botón de entrada aparece al llegar al capítulo 03: la recompensa de haber leído los tres */
+.hero .btn-liquid-glass{
+  position:absolute;
+  left:50%;
+  bottom:clamp(84px, 13vh, 140px);
+  transform:translate(-50%, 24px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .5s var(--ease-out), transform .6s var(--ease-out),
+             background .35s var(--ease-out), color .35s var(--ease-out), border-color .35s var(--ease-out);
+}
+.hero.is-last .btn-liquid-glass{ transform:translate(-50%, 0); opacity:1; pointer-events:auto; }
+
+@media (max-width:760px){
+  .hero-stage{ min-height:56vh; }
+  .hero-hud{ flex-direction:column; align-items:flex-start; gap:14px; }
+  .hero-scroll{ display:none; }
+  .hero-slide-title{ max-width:none; }
+  .hero .btn-liquid-glass{ bottom:clamp(120px, 22vh, 180px); padding:15px 30px; font-size:12.5px; }
+}
+
+/* --------------------------------------------------------------
+   04 · BARRA DE PROGRESO DE SCROLL
+   CSS puro con scroll-driven animations; el JS no interviene.
+   -------------------------------------------------------------- */
+.scroll-progress{
+  position:fixed; top:0; left:0; right:0;
+  height:2px; z-index:78;
+  background:linear-gradient(90deg, var(--orange), var(--flame));
+  transform:scaleX(0); transform-origin:0 50%;
+  pointer-events:none;
+}
+@supports (animation-timeline: scroll()){
+  .scroll-progress{
+    animation:scroll-progress-kf linear both;
+    animation-timeline:scroll(root);
+  }
+}
+@keyframes scroll-progress-kf{ to{ transform:scaleX(1); } }
+body.intro-active .scroll-progress{ opacity:0; }
+
+/* --------------------------------------------------------------
+   05 · GALERÍA CON DRAG / SWIPE
+   Reemplaza el grid rígido de Premiación por una tira arrastrable.
+   Sin JS sigue funcionando: es overflow-x + scroll-snap nativo.
+   -------------------------------------------------------------- */
+.gallery{ position:relative; }
+
+.gallery-meta{
+  display:flex; align-items:baseline; justify-content:space-between;
+  gap:16px;
+  margin-bottom:18px;
+  font-family:var(--font-mono);
+  font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+}
+.gallery-count{ color:#fff; }
+.gallery-count span{ color:var(--text-low); }
+.gallery-hint{ color:var(--text-low); }
+
+.gallery-track{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+  cursor:grab;
+  padding-bottom:2px;
+}
+.gallery-track::-webkit-scrollbar{ display:none; }
+.gallery-track.is-dragging{ cursor:grabbing; scroll-snap-type:none; scroll-behavior:auto; }
+.gallery-track.is-dragging .gallery-item img{ pointer-events:none; }
+
+.gallery-item{
+  --ex:50%;
+  position:relative;
+  flex:0 0 clamp(240px, 30vw, 380px);
+  aspect-ratio:3/4;
+  scroll-snap-align:start;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-bottom:2px solid rgba(var(--orange-rgb),1);
+  user-select:none;
+}
+/* Los dos primeros son piezas anchas: mantienen la jerarquía del grid anterior */
+.gallery-item--wide{ flex-basis:clamp(320px, 62vw, 760px); aspect-ratio:21/9; }
+
+.gallery-item img{
+  width:100%; height:100%; object-fit:cover;
+  filter:grayscale(.3) contrast(1.05);
+  transition:transform .7s var(--ease-out), filter .4s var(--ease-out);
+  -webkit-user-drag:none;
+}
+.gallery-item:hover img{ transform:scale(1.06); filter:grayscale(0) contrast(1.1); }
+.gallery-item::after{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 55%, rgba(0,0,0,.85) 100%);
+  pointer-events:none;
+}
+.gallery-item::before{
+  content:"";
+  position:absolute; left:0; right:0; bottom:-2px;
+  height:2px; z-index:2;
+  background:radial-gradient(120px circle at var(--ex) 50%, var(--flame) 0%, var(--orange) 45%, transparent 75%);
+  opacity:0;
+  transition:opacity .35s var(--ease-out), --ex .2s linear;
+  pointer-events:none;
+}
+.gallery-item:hover::before{ opacity:1; }
+
+.gallery-caption{
+  position:absolute; left:14px; bottom:14px; z-index:1;
+  display:flex; flex-direction:column; gap:2px;
+}
+.gallery-caption b{
+  font-family:var(--font-mono); font-weight:500;
+  font-size:11px; letter-spacing:.1em; color:#fff;
+}
+.gallery-caption span{
+  font-family:var(--font-mono);
+  font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(255,255,255,.55);
+}
+
+@media (max-width:640px){
+  .gallery-item{ flex-basis:78vw; }
+  .gallery-item--wide{ flex-basis:88vw; aspect-ratio:16/9; }
+}
+
+/* --------------------------------------------------------------
+   06 · SPLIT TEXT — revelado por palabra con stagger
+   El JS envuelve cada palabra de [data-split] en .split-word.
+   -------------------------------------------------------------- */
+/* El padding/margin negativo evita que overflow:hidden recorte descendentes (g, j, p) */
+.split-line{
+  display:inline-block;
+  overflow:hidden;
+  vertical-align:top;
+  padding-bottom:.14em;
+  margin-bottom:-.14em;
+}
+.split-word{
+  display:inline-block;
+  transform:translateY(105%);
+  opacity:0;
+  transition:transform .8s var(--ease-out), opacity .8s var(--ease-out);
+  transition-delay:calc(var(--i, 0) * 55ms);
+}
+.is-revealed .split-word{ transform:translateY(0); opacity:1; }
+@media (prefers-reduced-motion: reduce){
+  .split-word{ transform:none; opacity:1; transition:none; }
+}
+
+/* --------------------------------------------------------------
+   07 · ÍNDICES Y CÓDIGOS DE SECCIÓN
+   La numeración no decora: marca el orden de lectura del playbook.
+   -------------------------------------------------------------- */
+.section-head{ align-items:baseline; }
+.section-index{
+  font-family:var(--font-mono);
+  font-size:12px; letter-spacing:.2em;
+  color:var(--orange);
+  flex:none;
+  padding-bottom:.35em;
+}
+.section-code{
+  margin-left:auto;
+  font-family:var(--font-mono);
+  font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--text-low);
+  white-space:nowrap;
+  padding-bottom:.45em;
+}
+@media (max-width:640px){ .section-code{ display:none; } }
+
+/* --------------------------------------------------------------
+   08 · EASTER EGG DEL FOOTER
+   Aparece solo al pasar el cursor sobre la firma. Cuesta un :hover.
+   -------------------------------------------------------------- */
+.site-footer{ overflow:hidden; }
+.footer-brand{ cursor:pointer; transition:letter-spacing .5s var(--ease-out), color .4s var(--ease-out); }
+.footer-brand:hover{ letter-spacing:.62em; color:var(--orange); }
+
+.footer-egg{
+  height:0;
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity .5s var(--ease-out), transform .6s var(--ease-out), height .5s var(--ease-out);
+  pointer-events:none;
+}
+.footer-brand:hover + .footer-egg,
+.footer-brand:focus-visible + .footer-egg{
+  height:auto;
+  opacity:1;
+  transform:translateY(0);
+}
+.footer-egg span{
+  font-family:var(--font-mono);
+  font-size:10.5px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--orange);
+}
+
+
+/* ==========================================================================
+   CAPA 02 — TEMA PAPEL (blanco) + MECÁNICAS ORGC / BALMORAL / SEROTONINN
+   --------------------------------------------------------------------------
+   Todo lo de aquí abajo es aditivo y va al final del archivo a propósito:
+   sobrescribe la capa oscura original sin tener que reescribirla.
+
+   01 · Base de papel y tipografía editorial
+   02 · Cursor "mano" (open / point / grab)
+   03 · Pop-ups salientes sobre textos [data-pop]
+   04 · Carruseles de movimiento continuo (marquee)
+   05 · Medallas: 4 tarjetas + revelado de imagen en hover
+   06 · Ajustes finos de secciones al tema claro
+   ========================================================================== */
+
+/* --------------------------------------------------------------
+   01 · BASE DE PAPEL + TIPOGRAFÍA EDITORIAL
+   Referencia: oddritualgolf (retícula amplia, mono en versalitas,
+   numeración de sección visible) + serotoninn (corchetes [ ]).
+   -------------------------------------------------------------- */
+body{
+  background:var(--white);
+  color:var(--text-mid);
+}
+
+/* Grano de papel muy leve: le quita el "blanco de pantalla" plano */
+body::after{
+  content:"";
+  position:fixed; inset:0;
+  z-index:1;
+  pointer-events:none;
+  opacity:.035;
+  background-image:radial-gradient(rgba(10,10,10,.9) .5px, transparent .5px);
+  background-size:3px 3px;
+}
+
+h1,h2,h3,h4{ color:var(--ink); letter-spacing:-0.02em; }
+
+/* Etiquetas mono entre corchetes — firma de serotoninn */
+.eyebrow,
+.section-code,
+.gallery-hint,
+.hero-scroll{
+  color:var(--text-low);
+}
+.eyebrow::after{ content:""; }
+
+.section-title{ color:var(--ink); }
+.section-index{
+  color:var(--ink);
+  opacity:.16;
+}
+.section-code::before{ content:"[ "; }
+.section-code::after{ content:" ]"; }
+
+.section-intro{ color:var(--text-mid); }
+
+.section-divider span{
+  background:linear-gradient(90deg, transparent, rgba(10,10,10,.18), transparent);
+}
+
+.scroll-progress{ background:var(--ink); }
+
+/* Vidrio sobre imagen: ahora es papel translúcido */
+.glass-panel{
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--glass-shadow);
+  color:var(--text-mid);
+}
+.glass-panel h2,
+.glass-panel .showcase-title{ color:var(--ink); }
+.showcase-text{ color:var(--text-mid); }
+
+/* Marco bracket: en papel el naranja se cambia por tinta */
+.hud-corner{ border-color:var(--ink) !important; opacity:.55; }
+
+/* Menú superior sobre papel */
+.top-nav-links a{ color:var(--text-mid); }
+.top-nav-links a:hover{ color:var(--ink); }
+.top-nav img{ filter:invert(1) grayscale(1) contrast(1.2); }
+
+.nav-preview{
+  background:var(--white);
+  border:1px solid rgba(10,10,10,.14);
+}
+.nav-preview img{ filter:grayscale(.15) contrast(1.04) brightness(1.02); }
+.nav-preview::after{ color:var(--ink); text-shadow:none; }
+
+/* Menú flotante móvil */
+.nav-menu{ background:var(--white); border:1px solid var(--line); }
+.nav-menu a{ color:var(--text-mid); }
+.nav-menu a:hover{ color:var(--ink); }
+.nav-fab{ background:var(--ink); color:var(--white); }
+
+/* Footer */
+.site-footer{ border-top:1px solid var(--line); }
+.footer-brand{ color:var(--ink); }
+.footer-copy{ color:var(--text-low); }
+
+/* Hero: sigue sobre video, así que conserva texto blanco */
+.hero-slide-title,
+.hero-slide-num,
+.hero-slide-sub,
+.hero-index,
+.hero-scroll{ color:#fff; }
+.hero-slide-sub{ color:rgba(255,255,255,.72); }
+.hero-slide-cta{ color:#fff; border-color:rgba(255,255,255,.5); }
+.hero-slide-cta:hover{ background:#fff; color:var(--ink); }
+
+/* --------------------------------------------------------------
+   02 · CURSOR "MANO"
+   Tres estados dibujados en SVG (open / point / grab).
+   El JS conmuta las clases; el CSS sólo cruza opacidades.
+   -------------------------------------------------------------- */
+html.js-cursor,
+html.js-cursor a,
+html.js-cursor button,
+html.js-cursor label,
+html.js-cursor [data-pop],
+html.js-cursor .insignia-card,
+html.js-cursor .insignia-arrow,
+html.js-cursor .marquee-track,
+html.js-cursor .gallery-track{ cursor:none; }
+
+.cursor{ z-index:220; mix-blend-mode:normal; }
+
+/* El bracket HUD original se retira: la mano lo reemplaza */
+.cursor-ring,
+.cursor-dot{ display:none !important; }
+
+.cursor-hand{
+  position:absolute; top:0; left:0;
+  width:34px; height:34px;
+  margin:-6px 0 0 -8px;
+  transform-origin:22% 12%;
+  transition:transform .28s var(--ease-out);
+}
+.cursor-hand svg{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  opacity:0;
+  transform:scale(.86) rotate(-4deg);
+  transition:opacity .18s var(--ease-out), transform .28s var(--ease-out);
+  filter:drop-shadow(0 2px 6px rgba(10,10,10,.18));
+}
+.cursor-hand svg path,
+.cursor-hand svg rect,
+.cursor-hand svg circle{
+  fill:var(--orange);
+  stroke:none;
+}
+
+/* Estado por defecto: mano abierta */
+.cursor .hand-open{ opacity:1; transform:scale(1) rotate(0deg); }
+
+/* Sobre algo interactuable: dedo índice + etiqueta */
+.cursor.is-hot .hand-open{ opacity:0; }
+.cursor.is-hot .hand-point{ opacity:1; transform:scale(1.08) rotate(0deg); }
+.cursor.is-hot .cursor-hand{ transform:translate(1px,-2px); }
+
+/* Al presionar: mano cerrada (agarre) */
+.cursor.is-down .hand-open,
+.cursor.is-down .hand-point{ opacity:0; }
+.cursor.is-down .hand-grab{ opacity:1; transform:scale(.94) rotate(0deg); }
+
+/* Sobre zonas arrastrables el agarre es el estado en reposo */
+.cursor.is-grab .hand-open,
+.cursor.is-grab .hand-point{ opacity:0; }
+.cursor.is-grab .hand-grab{ opacity:1; transform:scale(1) rotate(0deg); }
+
+.cursor-label{
+  transform:translate(30px, 6px);
+  color:var(--ink);
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(10,10,10,.14);
+  padding:4px 8px;
+  font-size:9.5px;
+  letter-spacing:.18em;
+}
+.cursor.is-label .cursor-label{ opacity:1; }
+
+@media (pointer:coarse){ .cursor{ display:none; } }
+
+/* --------------------------------------------------------------
+   03 · POP-UPS SALIENTES SOBRE TEXTOS
+   Cualquier elemento con data-pop="..." abre una ficha flotante
+   que sigue al cursor. data-pop-img añade miniatura.
+   -------------------------------------------------------------- */
+[data-pop]{
+  position:relative;
+  cursor:help;
+  text-decoration:underline;
+  text-decoration-style:dotted;
+  text-decoration-thickness:1px;
+  text-underline-offset:4px;
+  text-decoration-color:rgba(10,10,10,.28);
+  transition:text-decoration-color .3s var(--ease-out), color .3s var(--ease-out);
+}
+[data-pop]:hover{
+  color:var(--ink);
+  text-decoration-color:var(--orange);
+}
+
+.textpop{
+  position:fixed; top:0; left:0;
+  z-index:210;
+  width:min(300px, 74vw);
+  padding:14px 16px 15px;
+  background:rgba(255,255,255,.94);
+  border:1px solid rgba(10,10,10,.14);
+  box-shadow:0 26px 60px rgba(10,10,10,.16);
+  backdrop-filter:blur(14px) saturate(120%);
+  -webkit-backdrop-filter:blur(14px) saturate(120%);
+  pointer-events:none;
+  opacity:0;
+  transform:translate3d(0,0,0) scale(.94);
+  transform-origin:0 0;
+  transition:opacity .3s var(--ease-out), scale .5s var(--ease-out);
+  will-change:transform;
+}
+.textpop.is-on{ opacity:1; scale:1; }
+
+.textpop-eyebrow{
+  display:block;
+  font-family:var(--font-mono);
+  font-size:9.5px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--orange);
+  margin-bottom:8px;
+}
+.textpop-text{
+  display:block;
+  font-size:13px; line-height:1.5;
+  color:var(--text-mid);
+}
+.textpop-media{
+  display:none;
+  width:100%; aspect-ratio:16/10;
+  margin-bottom:11px;
+  overflow:hidden;
+  background:var(--panel);
+}
+.textpop.has-media .textpop-media{ display:block; }
+.textpop-media img{ width:100%; height:100%; object-fit:cover; }
+
+/* Esquinas bracket para que hable el mismo idioma que el resto */
+.textpop::before,
+.textpop::after{
+  content:"";
+  position:absolute;
+  width:8px; height:8px;
+  opacity:.5;
+}
+.textpop::before{ top:-1px; left:-1px; border-top:1.5px solid var(--ink); border-left:1.5px solid var(--ink); }
+.textpop::after{ bottom:-1px; right:-1px; border-bottom:1.5px solid var(--ink); border-right:1.5px solid var(--ink); }
+
+@media (pointer:coarse){
+  .textpop{ display:none; }
+  [data-pop]{ text-decoration:none; }
+}
+
+/* --------------------------------------------------------------
+   04 · CARRUSELES DE MOVIMIENTO CONTINUO (MARQUEE)
+   Cinta infinita: el JS duplica el contenido y desplaza el track
+   con requestAnimationFrame. Hover = frena, arrastre = scrub.
+   -------------------------------------------------------------- */
+.marquee{
+  position:relative;
+  overflow:hidden;
+  width:100%;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding:0;
+}
+.marquee--bare{ border:0; }
+
+.marquee-viewport{ overflow:hidden; }
+
+.marquee-track{
+  display:flex;
+  align-items:stretch;
+  gap:var(--marquee-gap, 10px);
+  width:max-content;
+  will-change:transform;
+  transform:translate3d(0,0,0);
+}
+.marquee-track.is-dragging{ cursor:grabbing; }
+
+/* Desvanecido en los bordes para que la cinta no "corte" en seco */
+/* .marquee--fade{
+  -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+  mask-image:linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+} */
+
+/* --- 4a. Cinta de texto (ticker tipo serotoninn) --- */
+.marquee--text{
+  padding:16px 0;
+  background:var(--white);
+}
+.marquee--text .marquee-item{
+  display:inline-flex; align-items:center; gap:18px;
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:clamp(26px, 5vw, 30px);
+  line-height:1;
+  text-transform:uppercase;
+  letter-spacing:-0.02em;
+  color:var(--ink);
+  white-space:nowrap;
+}
+.marquee--text .marquee-item em{
+  font-style:normal;
+  color:transparent;
+  -webkit-text-stroke:0.5px rgba(10,10,10,.5);
+}
+.marquee--text .marquee-sep{
+  width:12px; height:12px;
+  flex:none;
+  border-radius:50%;
+  background:var(--orange);
+}
+
+/* --- 4b. Cinta de imágenes (galería continua tipo Odd Ritual) --- */
+.marquee--media{
+  border:0;
+  padding:0;
+}
+.marquee--media .marquee-track{ --marquee-gap:10px; }
+
+.marquee-figure{
+  position:relative;
+  flex:none;
+  width:clamp(230px, 26vw, 380px);
+  margin:0;
+}
+.marquee-figure--wide{ width:clamp(300px, 38vw, 560px); }
+
+.marquee-figure-frame{
+  position:relative;
+  overflow:hidden;
+  aspect-ratio:4/5;
+  background:var(--panel);
+}
+.marquee-figure--wide .marquee-figure-frame{ aspect-ratio:16/10; }
+
+.marquee-figure img{
+  width:100%; height:100%;
+  object-fit:cover;
+  filter:grayscale(.1) contrast(1.03);
+  transform:scale(1.02);
+  transition:transform 1.1s var(--ease-out), filter .6s var(--ease-out);
+}
+.marquee-figure:hover img{ transform:scale(1.07); filter:grayscale(0) contrast(1.06); }
+
+/* Caption debajo de la imagen, en mono — lectura editorial, no overlay */
+.marquee-figure figcaption{
+  display:flex; align-items:baseline; gap:10px;
+  padding:10px 2px 0;
+  font-family:var(--font-mono);
+  font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--text-low);
+}
+.marquee-figure figcaption b{ font-weight:500; color:var(--ink); }
+
+/* Barra de estado de la cinta */
+.marquee-meta{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px;
+  padding:0 2px 14px;
+  font-family:var(--font-mono);
+  font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--text-low);
+}
+.marquee-meta b{ color:var(--ink); font-weight:500; }
+.marquee-state{ display:inline-flex; align-items:center; gap:8px; }
+.marquee-state::before{
+  content:"";
+  width:6px; height:6px;
+  border-radius:50%;
+  background:var(--orange);
+  animation:marquee-pulse 1.8s ease-in-out infinite;
+}
+.marquee.is-paused ~ .marquee-meta .marquee-state::before,
+.marquee-meta.is-paused .marquee-state::before{ animation:none; opacity:.3; }
+@keyframes marquee-pulse{
+  0%,100%{ opacity:1; transform:scale(1); }
+  50%{ opacity:.35; transform:scale(.7); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .marquee-track{ transform:none !important; }
+  .marquee-viewport{ overflow-x:auto; }
+}
+
+/* --------------------------------------------------------------
+   05 · MEDALLAS — 4 tarjetas + revelado de imagen en hover
+   La segunda imagen del stack se cruza al pasar el cursor:
+   no es un corte, es un fundido con escala (movimiento fluido).
+   -------------------------------------------------------------- */
+.insignias-strip{ gap:8px; }
+
+.insignia-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  min-width:110px;
+}
+
+/* Sin velo blanco inferior: la imagen se ve limpia de arriba a abajo */
+.insignia-card::before{
+  background:none;
+  z-index:0;
+}
+
+.insignia-card:hover,
+.insignia-card:focus-within{ border-color:rgba(var(--orange-rgb),.5); }
+
+/* Carrusel: pila de slides recortados. El slide entrante sube desde abajo
+   (o baja desde arriba con la flecha <) tapando al anterior. */
+.insignia-bg-stack{ z-index:-1; }
+
+.insignia-bg{
+  filter:grayscale(.18) contrast(1.04);
+}
+.insignia-card:hover .insignia-bg,
+.insignia-card:focus-within .insignia-bg{ filter:grayscale(0) contrast(1.06); }
+
+/* Duración del barrido: normal al rotar, más corta al volver a la inicial */
+.insignia-card{ --sweep-dur:.85s; }
+.insignia-card.is-returning{ --sweep-dur:.5s; }
+
+@media (prefers-reduced-motion: reduce){
+  .insignia-card{ --sweep-dur:.01s; }
+}
+
+/* Si una imagen no carga, el JS la saca del carrusel */
+.insignia-bg[data-broken]{ display:none; }
+
+.insignia-name{ color:var(--ink); text-shadow:0 1px 12px rgba(255,255,255,.7); }
+.insignia-desc{ color:var(--text-mid); }
+
+/* En la versión expandida todo el texto va en blanco sobre la foto */
+.insignia-card:hover .insignia-name,
+.insignia-card:focus-within .insignia-name{
+  color:var(--white);
+  text-shadow:0 1px 18px rgba(0,0,0,.45);
+}
+.insignia-card:hover .insignia-rank,
+.insignia-card:focus-within .insignia-rank,
+.insignia-card:hover .insignia-desc,
+.insignia-card:focus-within .insignia-desc,
+.insignia-card:hover .insignia-icon,
+.insignia-card:focus-within .insignia-icon{
+  color:var(--white);
+  text-shadow:0 1px 14px rgba(0,0,0,.45);
+}
+/* Velo oscuro muy leve, sólo para que el texto blanco se lea */
+.insignia-content::before{
+  content:"";
+  position:absolute; inset:auto -16px -22px -16px;
+  height:62%;
+  background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.42));
+  opacity:0;
+  pointer-events:none;
+  z-index:-1;
+  transition:opacity .5s var(--ease-out);
+}
+.insignia-card:hover .insignia-content::before,
+.insignia-card:focus-within .insignia-content::before{ opacity:1; }
+
+/* Marca "hover para revelar" en la esquina — pista de interacción */
+.insignia-hint{
+  position:absolute; top:12px; left:12px; z-index:2;
+  font-family:var(--font-mono);
+  font-size:9px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink);
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(10,10,10,.12);
+  padding:4px 7px;
+  opacity:1;
+  transition:opacity .4s var(--ease-out), transform .4s var(--ease-out);
+}
+.insignia-card:hover .insignia-hint,
+.insignia-card:focus-within .insignia-hint{ opacity:0; transform:translateY(-4px); }
+
+@media (max-width:760px){
+  .insignia-hint{ display:none; }
+  .insignia-card{ height:96px; }
+}
+
+/* --------------------------------------------------------------
+   06 · AJUSTES FINOS AL TEMA CLARO
+   -------------------------------------------------------------- */
+.concepto-statement{ color:var(--ink); }
+.concepto-desc{ color:var(--text-mid); }
+.concepto-pillar{
+  background:var(--panel);
+  border:1px solid var(--line);
+}
+.concepto-pillar-value{ color:var(--ink); }
+.concepto-pillar-label{ color:var(--text-low); }
+
+.video-manifiesto-title{ color:#fff; }
+.video-manifiesto-content .eyebrow{ color:rgba(255,255,255,.7); }
+
+.type-specimen{ background:var(--panel); }
+
+.footer-egg span{
+  background:var(--ink);
+  color:var(--white);
+}
+
+::selection{ background:var(--ink); color:var(--white); }
+
+/* --------------------------------------------------------------
+   07 · AJUSTES DE DETALLE (post-integración)
+   -------------------------------------------------------------- */
+
+/* La cinta de texto respira más que la de imágenes */
+.marquee--text .marquee-track{ --marquee-gap:26px; align-items:center; }
+
+
+/* Cinta de premios: altura común para las piezas, anchos variables.
+   Así el ribete se lee como una tira de película y no como un mosaico. */
+.marquee--media .marquee-figure-frame{
+  height:clamp(250px, 32vw, 420px);
+  aspect-ratio:auto;
+}
+
+/* En papel el halo naranja de sección se lee como mancha: se baja a un
+   velo casi imperceptible que sólo templa el blanco. */
+.glow-surface::after{
+  background:radial-gradient(620px circle at 50% 38%, rgba(var(--orange-rgb),0.05), transparent 70%);
+}
+
+
+/* ============================================================
+   AJUSTES 31-08-26 — menú limpio (Colecciones + carrito) y
+   red de seguridad del revelado en las tarjetas de producto
+   ============================================================ */
+
+/* Menú: un link a la izquierda, logo al centro, carrito a la derecha */
+.top-nav-links--left{ justify-content:flex-start; }
+.top-nav-links--right{ justify-content:flex-end; }
+
+.top-nav-brand{
+  flex:none;
+  display:flex; align-items:center; justify-content:center;
+  height:44px;
+  width:clamp(96px, 9vw, 140px);
+}
+.top-nav-brand img{ width:100%; height:100%; object-fit:contain; }
+
+/* Carrito: icono relleno en naranja */
+.nav-cart{
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:22px;                 /* .icon usa 1em */
+  padding:2px;
+  border-bottom:none !important;
+  color:var(--orange);
+  transition:transform .3s var(--ease-out), opacity .3s var(--ease-out);
+}
+.nav-cart .icon{
+  fill:var(--orange);
+  stroke:none;
+  width:2em; height:2em;
+}
+.nav-cart:hover{ transform:translateY(-1px) scale(1.06); opacity:.85; }
+
+.nav-menu-cart{ display:inline-flex; align-items:center; gap:10px; }
+.nav-menu-cart .icon{ fill:var(--orange); stroke:none; width:18px; height:18px; }
+
+/* En móvil el carrito se mantiene visible aunque los links se oculten */
+@media (max-width:960px){
+  .top-nav{ justify-content:space-between; }
+  .top-nav-links--right{ display:flex; flex:0 0 auto; }
+}
+
+
+/* ============================================================
+   CONCEPTO — diagramación diagonal
+   "Run more ads" arriba a la izquierda, párrafo abajo a la derecha,
+   con aire suficiente para que nada quede pegado al borde.
+   ============================================================ */
+.concepto-grid--split{
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);
+  align-items:stretch;
+  gap:clamp(48px, 8vw, 130px);
+  min-height:clamp(320px, 40vw, 520px);
+  padding:clamp(12px, 3vw, 48px) clamp(16px, 4vw, 64px);
+}
+.concepto-split-lead{
+  align-self:start;
+  justify-self:start;
+}
+.concepto-split-note{
+  align-self:end;
+  justify-self:end;
+  max-width:46ch;
+  text-align:right;
+}
+.concepto-split-note .concepto-desc{
+  margin:0;
+  max-width:none;
+}
+
+@media (max-width:900px){
+  .concepto-grid--split{
+    grid-template-columns:1fr;
+    gap:36px;
+    min-height:0;
+    padding:0 4px;
+  }
+  .concepto-split-note{
+    justify-self:start;
+    text-align:left;
+    max-width:52ch;
+  }
+}
+
+/* ==========================================================================
+   CAPA FLOTANTE / REACTIVA — bloque aditivo
+   Si borras este bloque completo, el sitio vuelve al estado anterior.
+
+   01 · Parallax inverso con flotación ([data-float])
+   02 · Título del hero con filtro invertido (.is-inverted)
+   03 · RUN MORE ADS reactivo al mouse (.statement-line)
+   04 · Sección Comunidad
+   05 · Instagram en el footer
+   ========================================================================== */
+
+/* ---- 01 · PARALLAX INVERSO + FLOTACIÓN -------------------------------------
+   El JS sólo escribe --fl-x / --fl-y (en %) y --fl-scale. El zoom base deja un
+   margen oculto a cada lado, así el desplazamiento nunca descubre un borde. */
+[data-float]{
+  /* --fl-rx / --fl-ry: inclinación 3D (solo si el elemento tiene data-float-tilt;
+     si no, quedan en 0deg y la perspectiva no cambia nada). */
+  transform:
+    perspective(var(--fl-persp, 1200px))
+    rotateX(var(--fl-rx, 0deg))
+    rotateY(var(--fl-ry, 0deg))
+    translate3d(var(--fl-x, 0%), var(--fl-y, 0%), 0)
+    scale(var(--fl-scale, 1.1));
+  transform-origin:center center;
+  will-change:transform;
+  backface-visibility:hidden;
+}
+@media (prefers-reduced-motion: reduce){
+  [data-float]{ transform:none; }
+}
+
+/* ---- 02 · TÍTULO DEL HERO CON FILTRO INVERTIDO -----------------------------
+   Para que "difference" tome como fondo el video (y no un lienzo vacío), las
+   capas intermedias del hero no deben crear contexto de apilamiento propio:
+   se pasan a z-index:auto y el orden lo define el DOM. */
+.hero{ isolation:isolate; }
+.hero-veil{ z-index:auto; }
+.hero-stage{ z-index:auto; }
+
+.hero-slide-title.is-inverted{
+  color:#fff;
+  mix-blend-mode:difference;
+  isolation:auto;
+}
+/* Fallback: si el navegador no soporta mezcla, se mantiene legible con sombra */
+@supports not (mix-blend-mode: difference){
+  .hero-slide-title.is-inverted{ text-shadow:0 2px 30px rgba(0,0,0,.55); }
+}
+
+/* ---- 03 · RUN MORE ADS — reactivo al mouse --------------------------------
+   Movimiento por línea, micro-rotación, escala mínima y calentamiento de color
+   en la palabra en cursiva. Todo sutil: la idea es que se sienta, no que se vea. */
+.concepto-statement[data-reactive-lines]{
+  --heat:0;
+  perspective:900px;
+}
+.concepto-statement .statement-line{
+  display:block;
+  transform:
+    translate3d(var(--sx, 0px), var(--sy, 0px), 0)
+    rotate(var(--sr, 0deg))
+    scale(var(--sc, 1));
+  transform-origin:0% 50%;
+  will-change:transform;
+}
+.concepto-statement .statement-line i{
+  font-style:italic;
+  color:color-mix(in srgb, var(--orange) calc(var(--heat, 0) * 100%), var(--ink));
+  transition:color .12s var(--ease-soft);
+}
+@supports not (color: color-mix(in srgb, red, blue)){
+  .concepto-statement .statement-line i{ color:var(--ink); }
+  .concepto-statement[data-reactive-lines]:hover .statement-line i{ color:var(--orange); }
+}
+@media (prefers-reduced-motion: reduce){
+  .concepto-statement .statement-line{ transform:none; }
+}
+
+/* ---- 04 · SECCIÓN COMUNIDAD ----------------------------------------------- */
+.comunidad{
+  padding-left:0;
+  padding-right:0;
+}
+.comunidad::before{ display:none; }
+
+/* Dos columnas exactas: cada bloque ocupa justo el 50% del ancho.
+   Sin column-gap, para que la imagen arranque en la mitad exacta;
+   el aire lo pone el padding interno del bloque de texto. */
+.comunidad-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  grid-template-rows:auto auto;
+  column-gap:0;
+  align-items:start;
+}
+
+.comunidad-title{
+  grid-column:2;
+  grid-row:1;
+  font-family:var(--font-mono);
+  font-size:13px;
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-hi);
+  margin:0 0 clamp(18px, 3vw, 34px);
+  padding-left:clamp(12px, 2vw, 28px);
+}
+
+.comunidad-action{
+  grid-column:1;
+  grid-row:3;
+  padding:clamp(18px, 2.4vw, 30px) 0 0 clamp(24px, 4vw, 72px);
+}
+.comunidad-copy{
+  grid-column:1;
+  grid-row:2;
+  border-top:1px solid var(--line);
+  padding:clamp(18px, 2.4vw, 30px) 0 0;
+  margin:0 clamp(24px, 4vw, 72px);
+}
+.comunidad-name{
+  font-family:var(--font-mono);
+  font-size:12px;
+  font-weight:500;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--text-hi);
+  margin:0 0 12px;
+}
+.comunidad-desc{
+  font-size:14.5px;
+  line-height:1.65;
+  color:var(--text-mid);
+  margin:0;
+  max-width:46ch;
+}
+
+.comunidad-media{
+  grid-column:2;
+  grid-row:2;
+  position:relative;
+  margin:0;
+  aspect-ratio:16/11;
+  overflow:hidden;
+  background:var(--surface);
+}
+.comunidad-media img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* Enlace "〔 Visitar sitio 〕" — brackets en monospace, hover naranja */
+.bracket-link{
+  display:inline-flex; align-items:center; gap:9px;
+  font-family:var(--font-mono);
+  font-size:11.5px;
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-hi);
+  text-decoration:none;
+  transition:color .35s var(--ease-soft), gap .4s var(--ease-out);
+}
+.bracket-link::before{ content:"〔"; color:var(--text-low); transition:color .35s var(--ease-soft), transform .4s var(--ease-out); }
+.bracket-link::after{  content:"〕"; color:var(--text-low); transition:color .35s var(--ease-soft), transform .4s var(--ease-out); }
+.bracket-link:hover{ color:var(--orange); gap:13px; }
+.bracket-link:hover::before{ color:var(--orange); transform:translateX(-2px); }
+.bracket-link:hover::after{  color:var(--orange); transform:translateX(2px); }
+
+@media (max-width:900px){
+  .comunidad-grid{
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto auto auto;
+    row-gap:26px;
+  }
+  .comunidad-title{ grid-column:1; grid-row:1; padding-left:clamp(16px, 5vw, 28px); margin-bottom:0; }
+  .comunidad-media{ grid-column:1; grid-row:2; aspect-ratio:4/3; }
+  .comunidad-copy{ grid-column:1; grid-row:3; padding:22px 0 0; margin:0 clamp(16px, 5vw, 28px); }
+  .comunidad-action{ grid-column:1; grid-row:4; border-top:0; padding:0; margin:0 clamp(16px, 5vw, 28px); }
+  .comunidad-desc{ max-width:none; }
+}
+
+/* ---- 05 · INSTAGRAM EN EL FOOTER ------------------------------------------ */
+.footer-social{
+  display:flex; align-items:center; justify-content:center;
+  margin-top:-4px;
+}
+.footer-social a{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:38px; height:38px;
+  color:var(--text-mid);
+  transition:color .35s var(--ease-soft), transform .45s var(--ease-out);
+}
+.footer-social .icon{
+  width:19px; height:19px;
+  stroke-width:1.5;
+}
+.footer-social a:hover{ color:var(--orange); transform:translateY(-2px); }
+
+/* ==========================================================================
+   08 · AJUSTES NUEVOS (carrusel de comunidad, punticos, cursor direccional)
+   ========================================================================== */
+
+/* --------------------------------------------------------------
+   08.2 · CARRUSEL DE COMUNIDAD
+   Ocupa el mismo lugar que la imagen anterior dentro de la grilla.
+   -------------------------------------------------------------- */
+.comunidad-carousel{
+  grid-column:2;
+  grid-row:2;
+  position:relative;
+  margin:0;
+  aspect-ratio:21/9;
+  overflow:hidden;
+  background:var(--surface);
+}
+
+/* --------------------------------------------------------------
+   Variante invertida: primero la imagen, después el texto.
+   Mismo bloque, sólo se intercambian las columnas.
+   -------------------------------------------------------------- */
+.comunidad--reverse .comunidad-title{ grid-column:1; }
+.comunidad--reverse .comunidad-carousel,
+.comunidad--reverse .comunidad-media{ grid-column:1; }
+.comunidad--reverse .comunidad-copy{ grid-column:2; }
+.comunidad--reverse .comunidad-action{ grid-column:2; }
+
+.comunidad-slide{
+  position:absolute; inset:0;
+  margin:0;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .7s var(--ease-out), visibility .7s;
+}
+.comunidad-slide.is-active{ opacity:1; visibility:visible; }
+/* Con una sola imagen por sección, la figura se muestra siempre */
+.comunidad-carousel > .comunidad-slide:only-of-type{ opacity:1; visibility:visible; }
+/* Los pasos del carrusel solo guardan texto: nunca se pintan */
+.comunidad-texts{ display:none; }
+.comunidad-slide img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* Flechas: discretas, aparecen al pasar el cursor por el carrusel */
+.comunidad-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:3;
+  width:44px; height:44px;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(10,10,10,.12);
+  color:var(--ink);
+  font-family:var(--font-mono);
+  font-size:15px;
+  line-height:1;
+  cursor:pointer;
+  opacity:0;
+  transition:opacity .35s var(--ease-out), background .35s var(--ease-out),
+             color .35s var(--ease-out), transform .35s var(--ease-out);
+}
+.comunidad-arrow--prev{ left:14px; }
+.comunidad-arrow--next{ right:14px; }
+.comunidad-carousel:hover .comunidad-arrow,
+.comunidad-carousel:focus-within .comunidad-arrow{ opacity:1; }
+.comunidad-arrow:hover{ background:var(--orange); color:var(--white); border-color:transparent; }
+.comunidad-arrow--prev:hover{ transform:translateY(-50%) translateX(-3px); }
+.comunidad-arrow--next:hover{ transform:translateY(-50%) translateX(3px); }
+
+/* En táctil las flechas se quedan siempre visibles */
+@media (pointer:coarse){
+  .comunidad-arrow{ opacity:1; }
+}
+
+/* Contador 01 / 05 debajo de la descripción */
+.comunidad-counter{
+  display:block;
+  margin-top:18px;
+  font-family:var(--font-mono);
+  font-size:10.5px;
+  letter-spacing:.18em;
+  color:var(--text-low);
+}
+.comunidad-counter b{ color:var(--orange); font-weight:500; }
+
+/* Micro-fundido del texto mientras cambia de slide */
+.comunidad-copy .comunidad-name,
+.comunidad-copy .comunidad-desc,
+.comunidad-copy .comunidad-counter{
+  transition:opacity .26s var(--ease-out), transform .26s var(--ease-out);
+}
+.comunidad-copy.is-swapping .comunidad-name,
+.comunidad-copy.is-swapping .comunidad-desc,
+.comunidad-copy.is-swapping .comunidad-counter{
+  opacity:0;
+  transform:translateY(4px);
+}
+
+@media (max-width:900px){
+  /* En móvil ambas versiones se apilan igual: título · imagen · texto */
+  .comunidad-carousel,
+  .comunidad--reverse .comunidad-carousel{ grid-column:1; grid-row:2; aspect-ratio:4/3; }
+  .comunidad--reverse .comunidad-title{ grid-column:1; }
+  .comunidad--reverse .comunidad-copy{ grid-column:1; }
+  .comunidad--reverse .comunidad-action{ grid-column:1; }
+}
+
+/* --------------------------------------------------------------
+   08.3 · PUNTICOS INTERACTIVOS SOBRE IMÁGENES (.hotspot)
+   Posición con --x / --y en el style del botón.
+   -------------------------------------------------------------- */
+.hotspot{
+  position:absolute;
+  left:var(--x, 50%);
+  top:var(--y, 50%);
+  z-index:3;
+  width:28px; height:28px;
+  margin:-14px 0 0 -14px;
+  padding:0;
+  border:0;
+  background:none;
+  cursor:pointer;
+  -webkit-appearance:none;
+  appearance:none;
+}
+.hotspot-dot{
+  position:absolute; top:50%; left:50%;
+  width:9px; height:9px;
+  margin:-4.5px 0 0 -4.5px;
+  border-radius:50%;
+  background:var(--orange);
+  box-shadow:0 0 0 3px rgba(255,255,255,.55), 0 2px 10px rgba(10,10,10,.25);
+  transition:transform .35s var(--ease-out), background .35s var(--ease-out);
+}
+.hotspot-ring{
+  position:absolute; top:50%; left:50%;
+  width:28px; height:28px;
+  margin:-14px 0 0 -14px;
+  border-radius:50%;
+  border:1px solid rgba(var(--orange-rgb),.7);
+  opacity:0;
+  animation:hotspot-pulse 2.6s var(--ease-out) infinite;
+}
+.hotspot:hover .hotspot-dot,
+.hotspot:focus-visible .hotspot-dot{ transform:scale(1.45); background:var(--flame); }
+
+@keyframes hotspot-pulse{
+  0%   { transform:scale(.55); opacity:.85; }
+  70%  { transform:scale(1.5); opacity:0; }
+  100% { transform:scale(1.5); opacity:0; }
+}
+@media (prefers-reduced-motion: reduce){
+  .hotspot-ring{ animation:none; opacity:.5; }
+}
+
+/* --------------------------------------------------------------
+   08.4 · CURSOR — inclinación hacia la dirección del movimiento
+   El JS escribe --tilt en #cursor; el pivote es la punta del dedo.
+   -------------------------------------------------------------- */
+.cursor-hand{
+  transform-origin:22% 10%;
+  transform:rotate(var(--tilt, 0deg));
+  transition:none;                 /* el suavizado lo hace el JS, cuadro a cuadro */
+  will-change:transform;
+}
+.cursor.is-hot .cursor-hand{ transform:translate(1px,-2px) rotate(var(--tilt, 0deg)); }
+.cursor.is-down .cursor-hand,
+.cursor.is-grab .cursor-hand{ transform:rotate(calc(var(--tilt, 0deg) * .7)); }
+
+@media (prefers-reduced-motion: reduce){
+  .cursor-hand{ transform:none; }
+}
+
+
+/* ==========================================================================
+   CAPA MERCH — LÍNEA VISUAL DE LA MARCA
+   Bloque aditivo: si borras de aquí hasta el final, el sitio vuelve al
+   estado anterior.
+
+   M1 · Lockup Merch (M + erch + logo de dropi)
+   M2 · Logo principal con ciclo de 7 colores
+   M3 · Paleta: morphing cuadro → M al pasar el cursor
+   M4 · Desglose del logo: la itálica de la M se endereza
+   M5 · Tipografías
+   M6 · Firma del footer
+   M7 · Revelado con máscara en M (video manifiesto)
+   ========================================================================== */
+
+/* ---- M1 · LOCKUP ----------------------------------------------------------
+   La M es un SVG (no una letra), así que se alinea a mano contra la línea
+   base de "erch": --m-cap ajusta el alto y --m-base la altura sobre la base. */
+.merch-lockup{
+  --m-cap:  0.74em;
+  --m-base: 0.13em;
+  --m-kern: -0.1em;   /* ajuste óptico: la itálica deja aire de sobra a la derecha */
+  --by-size: 0.17em;   /* alto del "by" y del logo de dropi, relativo a la palabra */
+  --mark-h:  0.24em;
+  display:inline-flex;
+  flex-direction:column;
+  align-items:flex-end;      /* el logo de dropi queda abajo a la derecha */
+  gap:0.06em;
+  line-height:1;
+  letter-spacing:var(--merch-track);
+  color:var(--logo-ink, currentColor);
+}
+.merch-lockup-word{
+  display:inline-flex;
+  align-items:flex-end;
+  line-height:1;
+  font-family:'Chakra Petch', sans-serif;   /* = Redaction Regular */
+  font-weight:400;
+  white-space:nowrap;
+  position:relative;      /* las cotas del desglose se miden desde aquí */
+}
+.merch-m{
+  height:var(--m-cap);
+  width:1em;
+  margin-bottom:var(--m-base);
+  margin-right:var(--m-kern);
+  fill:currentColor;
+  overflow:visible;
+  transform-origin:left bottom;
+  transition:transform .5s var(--ease-out), color .5s var(--ease-out);
+}
+.merch-erch{ display:inline-block; }
+
+.merch-lockup-by{
+  display:inline-flex;
+  align-items:center;
+  gap:0.34em;
+  color:inherit;
+}
+.merch-by-label{
+  font-family:var(--font-mono);
+  font-size:var(--by-size);
+  letter-spacing:.08em;
+  text-transform:lowercase;
+  opacity:.72;
+}
+/* Firma "by dropi" completa (symbol #logo-by-dropi) --------------------------
+   Clase propia para no tocar el .dropi-mark del footer.
+   Vive en posicion absoluta dentro de .merch-lockup-word: asi el ancho en %
+   se mide contra la palabra "Merch" y la proporcion queda igual a cualquier
+   tamano de fuente (21,4% del ancho de la palabra = la del logo original).
+   --by-w:     ancho de la firma (% del ancho de la palabra)
+   --by-gap:   aire vertical (negativo = sube, pegado a la palabra)
+   --by-space: aire que el lockup reserva debajo para la firma */
+.merch-lockup--signed{ padding-bottom:var(--by-space, 0.09em); }
+
+.merch-lockup-by--bydropi{
+  position:absolute;
+  top:100%;
+  right:var(--merch-track);   /* compensa el tracking negativo: la firma queda
+                                 a ras del borde derecho de la "h" */
+  width:var(--by-w, 21.4%);
+  margin-top:var(--by-gap, -0.115em);
+  display:block;
+  gap:0;
+  pointer-events:none;
+}
+.by-dropi-mark{
+  display:block;
+  width:100%;
+  height:auto;
+  fill:currentColor;
+  color:inherit;
+  overflow:visible;
+}
+
+.dropi-mark{
+  height:var(--mark-h);
+  width:auto;
+  display:block;
+  color:inherit;
+  transition:color .35s var(--ease-out), transform .45s var(--ease-out);
+}
+
+/* ---- M2 · LOGO PRINCIPAL + CICLO DE COLOR --------------------------------
+   El JS solo escribe --logo-ink y --logo-paper cada 2 s; el degradado de
+   entrada y salida lo hace la transición de CSS. */
+.logo-cycle{
+  --logo-ink:   var(--mc-1);
+  --logo-paper: #151515;
+  position:relative;
+  flex-direction:column;
+  gap:clamp(28px,4vw,44px);
+  background:var(--logo-paper);
+  border:1px solid var(--line);
+  padding:clamp(56px,8vw,96px) clamp(24px,5vw,64px) clamp(30px,4vw,44px);
+  min-height:clamp(280px,34vw,420px);
+  overflow:hidden;
+  transition:background 1.1s var(--ease-out);
+}
+.logo-cycle .merch-lockup{
+  color:var(--logo-ink);
+  transition:color 1.1s var(--ease-out);
+}
+.merch-lockup--xl{ font-size:clamp(56px, 12vw, 148px); }
+
+.logo-cycle-meta{
+  display:flex; align-items:baseline; gap:14px;
+  font-family:var(--font-mono);
+  font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--logo-ink);
+  opacity:.78;
+  transition:color 1.1s var(--ease-out);
+}
+.logo-cycle-code{ opacity:.55; }
+
+.logo-pips{ display:flex; gap:8px; }
+.logo-pip{
+  width:30px; height:6px;
+  padding:0;
+  border:0;
+  cursor:pointer;
+  background:var(--logo-ink);
+  opacity:.22;
+  transition:opacity .4s var(--ease-out), transform .4s var(--ease-out);
+}
+.logo-pip:hover{ opacity:.6; }
+.logo-pip.is-active{ opacity:1; transform:scaleY(1.6); }
+
+@media (max-width:640px){
+  .logo-pip{ width:18px; }
+}
+
+/* ---- M3 · PALETA: MORPHING CUADRO → M -----------------------------------
+   El cuadro se convierte en la M al pasar el cursor y vuelve al salir. */
+.color-swatches--merch{
+  /* Los dos polígonos tienen los MISMOS 96 vértices, muestreados sobre el
+     contorno real de la M del logo, por eso el navegador puede interpolarlos.
+     Si cambias el logo, hay que volver a muestrear ambos: mismo número de
+     puntos en los dos o el morphing no ocurre. */
+  --shape-square: polygon(0.00% 0.00%, 4.17% 0.00%, 8.33% 0.00%, 12.50% 0.00%, 16.67% 0.00%, 20.83% 0.00%, 25.00% 0.00%, 29.17% 0.00%, 33.33% 0.00%, 37.50% 0.00%, 41.67% 0.00%, 45.83% 0.00%, 50.00% 0.00%, 54.17% 0.00%, 58.33% 0.00%, 62.50% 0.00%, 66.67% 0.00%, 70.83% 0.00%, 75.00% 0.00%, 79.17% 0.00%, 83.33% 0.00%, 87.50% 0.00%, 91.67% 0.00%, 95.83% 0.00%, 100.00% 0.00%, 100.00% 4.17%, 100.00% 8.33%, 100.00% 12.50%, 100.00% 16.67%, 100.00% 20.83%, 100.00% 25.00%, 100.00% 29.17%, 100.00% 33.33%, 100.00% 37.50%, 100.00% 41.67%, 100.00% 45.83%, 100.00% 50.00%, 100.00% 54.17%, 100.00% 58.33%, 100.00% 62.50%, 100.00% 66.67%, 100.00% 70.83%, 100.00% 75.00%, 100.00% 79.17%, 100.00% 83.33%, 100.00% 87.50%, 100.00% 91.67%, 100.00% 95.83%, 100.00% 100.00%, 95.83% 100.00%, 91.67% 100.00%, 87.50% 100.00%, 83.33% 100.00%, 79.17% 100.00%, 75.00% 100.00%, 70.83% 100.00%, 66.67% 100.00%, 62.50% 100.00%, 58.33% 100.00%, 54.17% 100.00%, 50.00% 100.00%, 45.83% 100.00%, 41.67% 100.00%, 37.50% 100.00%, 33.33% 100.00%, 29.17% 100.00%, 25.00% 100.00%, 20.83% 100.00%, 16.67% 100.00%, 12.50% 100.00%, 8.33% 100.00%, 4.17% 100.00%, 0.00% 100.00%, 0.00% 95.83%, 0.00% 91.67%, 0.00% 87.50%, 0.00% 83.33%, 0.00% 79.17%, 0.00% 75.00%, 0.00% 70.83%, 0.00% 66.67%, 0.00% 62.50%, 0.00% 58.33%, 0.00% 54.17%, 0.00% 50.00%, 0.00% 45.83%, 0.00% 41.67%, 0.00% 37.50%, 0.00% 33.33%, 0.00% 29.17%, 0.00% 25.00%, 0.00% 20.83%, 0.00% 16.67%, 0.00% 12.50%, 0.00% 8.33%, 0.00% 4.17%);
+  --shape-m:      polygon(23.15% 23.87%, 29.56% 23.87%, 35.96% 23.87%, 42.37% 23.87%, 42.74% 28.79%, 42.85% 33.92%, 42.96% 39.05%, 43.07% 44.17%, 43.18% 49.30%, 43.30% 54.43%, 43.41% 59.56%, 41.30% 64.08%, 44.67% 61.51%, 48.60% 57.46%, 52.52% 53.40%, 56.45% 49.35%, 60.38% 45.30%, 64.30% 41.25%, 68.23% 37.19%, 72.16% 33.14%, 76.09% 29.09%, 80.01% 25.04%, 85.71% 23.87%, 92.12% 23.87%, 98.53% 23.87%, 96.86% 26.09%, 91.08% 28.06%, 88.02% 32.51%, 85.72% 37.30%, 83.43% 42.08%, 81.13% 46.87%, 78.83% 51.66%, 76.54% 56.45%, 74.24% 61.23%, 71.95% 66.02%, 72.46% 70.76%, 77.56% 72.42%, 72.44% 73.91%, 66.03% 73.91%, 59.62% 73.91%, 53.21% 73.91%, 54.00% 71.72%, 59.87% 69.94%, 63.06% 65.55%, 65.36% 60.77%, 67.66% 55.98%, 69.96% 51.20%, 72.26% 46.41%, 74.56% 41.62%, 76.86% 36.84%, 79.82% 32.35%, 77.85% 32.21%, 73.90% 36.25%, 69.95% 40.28%, 66.00% 44.32%, 62.04% 48.36%, 58.09% 52.40%, 54.14% 56.43%, 50.19% 60.47%, 46.23% 64.51%, 42.28% 68.54%, 38.33% 72.58%, 34.67% 75.66%, 34.56% 70.53%, 34.45% 65.40%, 34.34% 60.27%, 34.23% 55.15%, 34.12% 50.02%, 34.01% 44.89%, 33.90% 39.77%, 33.79% 34.64%, 33.50% 30.35%, 31.22% 35.14%, 28.94% 39.93%, 26.66% 44.73%, 24.38% 49.52%, 22.10% 54.31%, 19.82% 59.10%, 17.53% 63.90%, 16.04% 68.82%, 20.77% 71.66%, 19.49% 73.91%, 13.08% 73.91%, 6.67% 73.91%, 0.26% 73.91%, 4.32% 71.44%, 9.66% 68.79%, 12.47% 64.21%, 14.76% 59.42%, 17.05% 54.63%, 19.34% 49.84%, 21.63% 45.05%, 23.92% 40.26%, 26.21% 35.47%, 28.34% 30.64%, 25.72% 26.51%);
+  grid-template-columns:repeat(8, 1fr);
+  gap:14px;
+}
+.color-swatches--merch .color-swatch{
+  aspect-ratio:auto;
+  border:0;
+  padding:0;
+  overflow:visible;
+  display:flex; flex-direction:column; gap:12px;
+  margin:0;
+  background:none;
+  transition:transform .5s var(--ease-out);
+}
+.color-swatch-chip{
+  display:block;
+  aspect-ratio:4/5;
+  background:var(--mc);
+  -webkit-clip-path:var(--shape-square);
+  clip-path:var(--shape-square);
+  transition:-webkit-clip-path .55s var(--ease-out), clip-path .55s var(--ease-out);
+}
+.color-swatches--merch .color-swatch:hover .color-swatch-chip,
+.color-swatches--merch .color-swatch:focus-within .color-swatch-chip{
+  -webkit-clip-path:var(--shape-m);
+  clip-path:var(--shape-m);
+}
+.color-swatch-meta{ display:flex; flex-direction:column; gap:2px; }
+.color-swatches--merch .color-swatch-name{ font-size:11.5px; letter-spacing:.02em; color:var(--text-hi); }
+.color-swatches--merch .color-swatch-hex{ margin-top:0; font-size:10.5px; color:var(--text-mid); }
+.color-swatch-code{
+  font-family:var(--font-mono);
+  font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--text-low);
+}
+
+/* El chip negro se aclara contra el papel: línea fina para que se lea el borde */
+.color-swatches--merch .color-swatch--dark .color-swatch-chip{
+  box-shadow:inset 0 0 0 1px rgba(244,236,230,.14);
+}
+
+@media (max-width:1300px){ .color-swatches--merch{ grid-template-columns:repeat(4, 1fr); } }
+@media (max-width:1100px){ .color-swatches--merch{ grid-template-columns:repeat(4, 1fr); } }
+@media (max-width:700px){  .color-swatches--merch{ grid-template-columns:repeat(2, 1fr); } }
+
+@media (prefers-reduced-motion: reduce){
+  .color-swatch-chip{ transition:none; }
+}
+
+/* ---- M4 · DESGLOSE DEL LOGO --------------------------------------------- */
+.logo-breakdown{
+  aspect-ratio:21/9;
+  padding:clamp(24px,4vw,48px);
+  border:1px solid var(--line);
+  background-color:var(--surface);
+}
+.merch-lockup--breakdown{
+  position:relative;
+  font-size:clamp(48px, 10vw, 120px);
+  color:var(--text-hi);
+  outline-offset:12px;
+  cursor:pointer;
+}
+/* Al pasar el cursor la M se endereza: se le aplica la inclinación al revés */
+.merch-lockup--breakdown:hover .merch-m,
+.merch-lockup--breakdown:focus-visible .merch-m{
+  transform:skewX(var(--m-slant));
+  color:var(--orange);
+}
+
+/* Cotas: línea base y línea de inclinación de la M */
+.mb-guide{
+  position:absolute;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .45s var(--ease-out);
+}
+.mb-guide--base{
+  left:-8%; right:-8%; bottom:var(--m-base);
+  height:1px;
+  background:rgba(var(--orange-rgb),.5);
+}
+.mb-guide--slant{
+  left:-0.02em; bottom:var(--m-base);
+  width:0; height:var(--m-cap);
+  border-left:1px dashed rgba(var(--orange-rgb),.75);
+  transform:skewX(calc(var(--m-slant) * -1));
+  transform-origin:left bottom;
+}
+.merch-lockup--breakdown:hover .mb-guide,
+.merch-lockup--breakdown:focus-visible .mb-guide{ opacity:1; }
+
+.logo-note{
+  position:absolute;
+  right:clamp(16px,3vw,32px); bottom:clamp(16px,3vw,32px);
+  z-index:3;
+  width:min(340px, 78%);
+  padding:20px 22px;
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  box-shadow:var(--glass-shadow);
+  opacity:0;
+  transform:translateY(14px);
+  pointer-events:none;
+  transition:opacity .4s var(--ease-out), transform .5s var(--ease-out);
+}
+.merch-lockup--breakdown:hover ~ .logo-note,
+.merch-lockup--breakdown:focus-visible ~ .logo-note{ opacity:1; transform:translateY(0); }
+
+.logo-note-eyebrow{
+  display:block;
+  font-family:var(--font-mono);
+  font-size:10px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--orange);
+  margin-bottom:10px;
+}
+.logo-note-text{ font-size:12.5px; line-height:1.55; color:var(--text-mid); }
+.logo-note-specs{ margin-top:14px; display:flex; flex-direction:column; gap:6px; }
+.logo-note-specs li{
+  display:flex; justify-content:space-between; gap:14px;
+  padding-top:6px;
+  border-top:1px solid var(--line);
+  font-family:var(--font-mono);
+  font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+}
+.logo-note-specs b{ color:var(--text-low); font-weight:400; }
+.logo-note-specs span{ color:var(--text-hi); text-align:right; }
+
+.logo-breakdown-hint{
+  position:absolute;
+  left:clamp(16px,3vw,32px); top:clamp(16px,3vw,32px);
+  font-family:var(--font-mono);
+  font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--text-low);
+}
+
+@media (max-width:760px){
+  /* Sin cursor no hay hover: en móvil la ficha se muestra siempre, debajo del logo */
+  .logo-breakdown{
+    aspect-ratio:auto;
+    flex-direction:column;
+    align-items:stretch;
+    justify-content:flex-start;
+    gap:22px;
+    padding-top:52px;
+  }
+  .merch-lockup--breakdown{
+    font-size:clamp(34px, 13vw, 72px);
+    align-self:center;
+  }
+  .logo-note{ position:static; width:100%; opacity:1; transform:none; }
+  .logo-note-specs li{ flex-direction:column; gap:2px; }
+  .logo-note-specs span{ text-align:left; }
+  .logo-breakdown-hint{ display:none; }
+}
+
+/* ---- M5 · TIPOGRAFÍAS --------------------------------------------------- */
+.type-specimen-glyph--redaction{ font-family:'Chakra Petch', sans-serif; font-weight:400; }
+.type-specimen-glyph--italic{
+  font-family:'Redaction Italic', 'Chakra Petch', sans-serif;
+  font-weight:400;
+  color:var(--orange);
+}
+.type-specimen-glyph--tusker{ font-family:var(--font-para); font-weight:700; letter-spacing:-0.01em; }
+.type-specimen-sample--tusker{ font-family:var(--font-para); font-weight:500; font-size:14px; }
+
+/* Para pasar TODOS los párrafos del sitio a Tusker Grotesk, descomenta:
+.section-intro, .comunidad-desc, .insignia-desc, .showcase-text, .type-specimen-sample{
+  font-family:var(--font-para);
+} */
+
+/* ---- M6 · FIRMA DEL FOOTER --------------------------------------------- */
+.footer-brand.merch-lockup{
+  font-size:38px;
+  --by-size: 0.24em;
+  --mark-h:  0.34em;
+  align-items:flex-end;
+  letter-spacing:var(--merch-track);
+}
+/* El hover del footer abría el interletrado; en el lockup el tracking es
+   parte del logo, así que solo cambia el color. */
+.footer-brand.merch-lockup:hover{ letter-spacing:var(--merch-track); color:var(--orange); }
+.footer-brand.merch-lockup .merch-lockup-by{ margin:0px auto; gap:1em; }
+[data-dropi-random]{ cursor:pointer; }
+[data-dropi-random] .dropi-mark{ color:var(--dropi-ink, currentColor); }
+[data-dropi-random]:hover .dropi-mark{ transform:translateY(-2px); }
+
+/* ---- M7 · REVELADO CON MÁSCARA EN M -----------------------------------
+   La capa de encima se recorta con la M del logo (máscara SVG en línea).
+   Debajo queda la imagen de fondo; las dos se mueven al contrario porque
+   una tiene data-float-strength positivo y la otra negativo. */
+.mreveal{ isolation:isolate; }
+.mreveal-back{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+
+.mreveal-mask{
+  --m-mask:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1809.12 1181.83'%3E%3Cpath fill='%23fff' d='M418.73,0h352.45l14.55,831-40.42,53.35,3.23,43.65L1467.99,0h341.13l-17.78,46.88-37.18,3.23c-77.6,6.47-124.49,45.27-151.97,119.64l-303.94,792.2c-27.49,74.37,3.23,113.17,75.99,119.64l33.95,3.23-17.78,46.88h-462.39l17.78-46.88,37.19-3.23c77.6-6.47,122.87-45.27,150.36-119.64l282.93-735.61,53.35-66.29h-38.8l-800.28,1021.77h-3.23l-17.78-1044.41-307.18,806.75c-32.33,80.84-3.23,126.1,67.9,135.8l35.57,4.85-17.78,46.88H0l17.78-46.88,37.19-4.85c80.84-11.32,127.72-53.35,158.44-135.8L502.8,187.54c30.72-82.45,3.23-124.49-69.52-135.81l-32.33-4.85L418.73,0Z'/%3E%3C/svg%3E");
+  position:absolute;
+  inset:0;
+  z-index:1;
+  overflow:hidden;
+  pointer-events:none;
+  -webkit-mask-image:var(--m-mask);
+          mask-image:var(--m-mask);
+  -webkit-mask-repeat:no-repeat;
+          mask-repeat:no-repeat;
+  -webkit-mask-position:center center;
+          mask-position:center center;
+  /* Tamaño de la M sobre la sección: subilo o bajalo a gusto */
+  -webkit-mask-size:72% auto;
+          mask-size:72% auto;
+}
+.mreveal-front{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  filter:none;
+}
+@media (max-width:760px){
+  .mreveal-mask{ -webkit-mask-size:92% auto; mask-size:92% auto; }
+}
+
+/* ---- 03 · HERO A SANGRE — la foto llena la primera pantalla ---------------
+   El hero reutiliza .showcase-frame, que está pensado para bloques dentro del
+   playbook (aspect-ratio 16/9 + padding). Ahí adentro la imagen dejaba ver el
+   fondo del hero arriba y abajo. Con .hero-media el marco se estira a todo el
+   viewport y el resto del HUD queda por encima. */
+.hero{ padding-left:0; padding-right:0; }
+
+.hero .hero-media{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  aspect-ratio:auto;
+  padding:0;
+  display:block;
+  /* z-index:auto a propósito: así el título con mix-blend-mode:difference
+     sigue tomando la foto como fondo (ver bloque 02). */
+  z-index:auto;
+  pointer-events:none;
+}
+.hero .hero-media .showcase-bg{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+}
+/* En vertical el encuadre se corre un poco hacia el centro-alto: en 9/16 la
+   mesa se pierde si se recorta desde el centro exacto. */
+@media (max-aspect-ratio:1/1){
+  .hero .hero-media .showcase-bg{ object-position:60% 45%; }
+}
